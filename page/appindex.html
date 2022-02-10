@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <style type="text/css">
+        img {
+            width: 50%;
+            height: 50%;
+        }
+    </style>
 </head>
 <body>
 <h1>Текст</h1>
@@ -11,10 +17,7 @@
     <input type="submit" value="Отправить" id="submit">
 </form>
 <div id = "one"></div>
-<div id = "two"></div>
 <script>
-    document.getElementById("one").innerHTML="<img src='png_files/1.png'>";
-    document.getElementById("two").innerHTML="<img src='png_files/2.png'>";
     document.getElementById("submit").addEventListener("click", function (cool){
         cool.preventDefault();
         let some_Form = document.forms["some_Form"];
@@ -26,6 +29,7 @@
         request.addEventListener("load", function () {
         let receivedUser = JSON.parse(request.response);
         console.log(receivedUser.image_Src);
+        document.getElementById("one").innerHTML=`<img src="png_files/${receivedUser.image_Src}.png">`;
         });
         request.send(user);
     });

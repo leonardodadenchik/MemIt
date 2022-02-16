@@ -17,24 +17,28 @@
     <input type="submit" value="Отправить" id="submit">
 </form>
 <div id = "one"></div>
+<img src="../png_files/2.png">
 <script>
-function req_func(data_for_user,req_src,cont_type) {
-    let request = new XMLHttpRequest();
-    request.open("POST", req_src, true);
-    request.setRequestHeader("Content-Type",cont_type);
-    request.addEventListener("load", function () {
-        let receivedUser = JSON.parse(request.response);
-        return receivedUser.image_Src;
+async function req_func(data_to_send) {
+    console.log(data_to_send);
+    let response = await fetch("/user", {
+        method: 'POST',
+        headers: {
+            'Content-Type':'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(data_to_send)
     });
-    request.send(data_for_user);
+    let result = await response.json();
+    alert(result.image_Src);
+
 }
 
-    document.getElementById("submit").addEventListener("click", function (cool){
+    document.getElementById("submit").addEventListener("click",function (cool) {
         cool.preventDefault();
         let some_Form = document.forms["some_Form"];
         let image_Src = some_Form.elements["image_Src"].value;
-        let user = JSON.stringify({image_Src: image_Src});
-        console.log(req_func(user,"/user","application/json"));
+        let data_to_send = {image_Src: image_Src};
+        req_func(data_to_send);
     });
 </script>
 

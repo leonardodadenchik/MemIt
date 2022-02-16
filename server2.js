@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-const jsonParser = express.json();
+const jsonParser = express.json()
+
 app.use(express.static(__dirname + "/page"));
 
 app.post("/user",jsonParser, function (request, response) {

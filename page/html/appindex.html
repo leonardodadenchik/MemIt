@@ -2,22 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <style type="text/css">
-        img {
-            width: 50%;
-            height: 50%;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="../styles/css.css">
 </head>
 <body>
-<h1>Текст</h1>
-<form name="some_Form">
-    <label>image_url:</label><br>
-    <input type="text" name="image_Src"><br><br>
-    <input type="submit" value="Отправить" id="submit">
-</form>
-<div id = "one"></div>
-<img src="../png_files/2.png">
+<div class="wrapper">
+    <section>
+    <div class="wave wave1"></div>
+    <div class="wave wave2"></div>
+    <div class="wave wave3"></div>
+    <div class="wave wave4"></div>
+    </section>
+    <h1>Текст</h1>
+    <form name="some_Form">
+        <label>image_url:</label><br>
+        <input type="text" name="image_Src"><br><br>
+        <input type="submit" value="Отправить" id="submit">
+    </form>
+    <div id = "one"></div>
+    <img src="../png_files/2.png">
 <script>
 async function req_func(data_to_send) {
     console.log(data_to_send);
@@ -29,7 +31,7 @@ async function req_func(data_to_send) {
         body: JSON.stringify(data_to_send)
     });
     let result = await response.json();
-    alert(result.image_Src);
+    alert(result);
 
 }
 
@@ -41,6 +43,6 @@ async function req_func(data_to_send) {
         req_func(data_to_send);
     });
 </script>
-
+</div>
 </body>
 </html>

@@ -5,13 +5,13 @@ img {
 }
 #menu{
     width: 100%;
-    height: 100px;
+    height: 70px;
     background-color: #ff7474;
     position: fixed;
 }
 
 #first_block{
-    padding-top: 100px;
+    padding-top: 70px;
 }
 #second_block{
     width: 100%;

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="../styles/css.css">
+    <link rel="stylesheet" type="text/css" href="../styles/appindex.css">
 </head>
 <body>
 <div class="wrapper">
@@ -29,29 +29,7 @@
 <div id="second_block"></div>
 <div id="third_block"></div>
 </div>
-<script>
-async function req_func(data_to_send) {
-    console.log(data_to_send);
-    let response = await fetch("/user", {
-        method: 'POST',
-        headers: {
-            'Content-Type':'application/json;charset=utf-8'
-        },
-        body: JSON.stringify(data_to_send)
-    });
-    let result = await response.json();
-    alert(result);
-
-}
-
-    document.getElementById("submit").addEventListener("click",function (cool) {
-        cool.preventDefault();
-        let some_Form = document.forms["some_Form"];
-        let image_Src = some_Form.elements["image_Src"].value;
-        let data_to_send = {image_Src: image_Src};
-        req_func(data_to_send);
-    });
-</script>
+<script src="../js_files/appindex.js"></script>
 </div>
 </body>
 </html>

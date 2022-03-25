@@ -1,5 +1,4 @@
-let HOST = location.origin.replace(/^http/, 'ws')
-let myWs = new WebSocket(HOST);
+let myWs = new WebSocket("ws://https://memitgaym.herokuapp.com/:1488/");
 
 
 let game_data = {

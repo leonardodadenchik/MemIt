@@ -1,5 +1,5 @@
-let myWs = new WebSocket("ws://https://memitgaym.herokuapp.com/:1488/");
-
+let myWs = new WebSocket("wss://memitgaym.herokuapp.com/:1488/");
+//let myWs = new WebSocket("wss://localhost:1488/");
 
 let game_data = {
     cards: "",

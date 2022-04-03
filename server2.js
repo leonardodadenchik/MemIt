@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const WebSocket = require('ws');
-const wsServer = new WebSocket.Server({ port: 9999 });
+const wsServer = new WebSocket.Server({ port: 80 });
 
 const { MongoClient } = require('mongodb')
 const client = new MongoClient('mongodb+srv://kaelovek:letmekeepitsecret@cluster0.y4hpw.mongodb.net/memesituations?retryWrites=true&w=majority')

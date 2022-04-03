@@ -1,7 +1,7 @@
 //localhost
-//let myWs = new WebSocket("ws://localhost:1488/");
+//let myWs = new WebSocket("ws://localhost:9999/");
 //server
-let myWs = new WebSocket("ws://memitgaym.herokuapp.com:9999/");
+let myWs = new WebSocket("ws://memitgaym.herokuapp.com:80/");
 
 let game_data = {
     cards: "",

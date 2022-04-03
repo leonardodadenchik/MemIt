@@ -1,4 +1,7 @@
-let myWs = new WebSocket("ws://memitgaym.herokuapp.com:1488/");
+//localhost
+//let myWs = new WebSocket("ws://localhost:1488/");
+//server
+let myWs = new WebSocket("ws://memitgaym.herokuapp.com:9999/");
 
 let game_data = {
     cards: "",
@@ -44,9 +47,9 @@ function connect_to_room() {
         message = JSON.parse(message.data)
         switch (message.action) {
             case "message":
+                console.log(message.message);
                 break;
             default:
-                console.log(message.message);
                 break;
 
         }

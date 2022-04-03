@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const WebSocket = require('ws');
-const wsServer = new WebSocket.Server({ port: 1488 });
+const wsServer = new WebSocket.Server({ port: 9999 });
 
 const { MongoClient } = require('mongodb')
 const client = new MongoClient('mongodb+srv://kaelovek:letmekeepitsecret@cluster0.y4hpw.mongodb.net/memesituations?retryWrites=true&w=majority')
@@ -72,8 +72,7 @@ app.listen(PORT, () => console.log("Сервер работает"));
 wsServer.on('connection', onConnect);
 
 function onConnect(wsClient) {
-
-    console.log('Новое подключение');
+    console.log("new connection")
 
     wsClient.on('close', function () {
         console.log('Пользователь отключился');
@@ -90,9 +89,9 @@ function onConnect(wsClient) {
                         if (!!room) {
                             let players = room.players
                             if (players.length === room.playersCount) {
-                                wsClient.send(JSON.stringify({ action: message, message: 'room already  fool lel -- =_=' }));
+                                wsClient.send(JSON.stringify({ action: "message", message: 'room already  fool lel -- =_=' }));
                             } else {
-                                wsClient.send(JSON.stringify({ action: message, message: `cards: ${room.cards[players.length]}` }))
+                                wsClient.send(JSON.stringify({ action: "message", message: `cards: ${room.cards[players.length]}` }))
                                 players.push(
                                     {
                                         name: jsonMessage.name,
@@ -107,7 +106,7 @@ function onConnect(wsClient) {
                                     })
                             }
                         } else {
-                            wsClient.send(JSON.stringify({ action: message, message: 'room not  exists 404 -- 0_0' }))
+                            wsClient.send(JSON.stringify({ action: "message", message: 'room not  exists 404 -- 0_0' }))
                         }
                     }
                     roomVariants()

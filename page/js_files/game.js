@@ -1,7 +1,5 @@
-//localhost
-//let myWs = new WebSocket("ws://localhost:9999/");
-//server
-let myWs = new WebSocket("ws://memitgaym.herokuapp.com:80/");
+host = (location.origin.replace(/^http/, 'ws')+":8814/").replace(":3000", '');
+let myWs = new WebSocket(host);
 
 let game_data = {
     cards: "",
@@ -31,17 +29,20 @@ function send_room_data() {
     req_func(room_settings, "/get_values");
     app.go_to_connection();
 }
-window.onbeforeunload = wsClose;
-function wsClose() {
+
+
+window.onbeforeunload = function () {
     myWs.send(JSON.stringify({ action: 'disconnect', room_name: game_data.room_code }));
 }
+
+
+
 function connect_to_room() {
     let room_name = document.getElementById("room_name").value;
     game_data.room_code = room_name;
     let player_name = document.getElementById("player_name").value;
 
     myWs.send(JSON.stringify({ action: 'connect_to_room', code: room_name.toString(), name: player_name.toString() }));
-
 
     myWs.onmessage = function (message) {
         message = JSON.parse(message.data)

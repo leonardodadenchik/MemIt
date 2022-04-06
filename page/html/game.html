@@ -35,6 +35,10 @@
 
         <input type="submit" value="connect" onclick="connect_to_room()"><br><br>
     </div>
+
+    <div v-show="visible_third">
+        info about connections
+    </div>
 </div>
 <script>
     const app = Vue.createApp({
@@ -42,14 +46,21 @@
             return {
                 visible_first: true,
                 visible_second: false,
-                visible_room_code:true,
-                room_code:""
+                visible_room_code:false,
+                visible_third: false,
+                room_code:"",
             }
         },
         methods: {
             go_to_connection() {
                 this.visible_first = false;
                 this.visible_second = true;
+                this.visible_room_code = true;
+            },
+            go_to_waiting_room() {
+                this.visible_room_code = false;
+                this.visible_second = false;
+                this.visible_third = true;
             }
         }
     }).mount('#app');

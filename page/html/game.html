@@ -37,7 +37,7 @@
     </div>
 
     <div v-show="visible_third">
-        info about connections
+        {{nicknames}}
     </div>
 </div>
 <script>
@@ -49,6 +49,7 @@
                 visible_room_code:false,
                 visible_third: false,
                 room_code:"",
+                nicknames:"",
             }
         },
         methods: {

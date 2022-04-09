@@ -9,7 +9,6 @@ const client = new MongoClient('mongodb+srv://kaelovek:letmekeepitsecret@cluster
 const fs = require('fs');
 const PORT = process.env.PORT || 3000
 
-const jsonParser = express.json()
 const { generatorCode } = require('./module_func')
 const { different_nums } = require('./module_func')
 const { rand_int } = require('./module_func')
@@ -22,11 +21,13 @@ const collection_situations = 'situations'
 const collection_rooms = 'rooms'
 const allPictureFiles = getAllDirPhotoFiles(photo_dir, fs)
 
+let rooms = []
+
 client.connect()
 
 app.use(express.static(__dirname + "/page"));
 
-app.listen(PORT, () => console.log("Сервер работает"));
+app.listen(PORT, () => console.log("Server is working!"));
 
 
 wsServer.on('connection', onConnect);
@@ -35,80 +36,74 @@ function onConnect(wsClient) {
     console.log("new connection")
 
     wsClient.on('close', function () {
-        console.log('Пользователь отключился');
+        console.log('User disconnect');
     });
 
 
     wsClient.on('message', function (message) {
         try {
             const jsonMessage = JSON.parse(message);
-            switch (jsonMessage.action) {
+            switch (jsonMessage.content) {
+                case 'room_creation':
+                    async function create_room() {
+                        // get random situations \\ send them
+                        let cards = [];
+                        await client.connect()
+                        await client.db().collection(collection_situations).find({'id': {$in: different_nums(await client.db().collection(collection_situations).countDocuments(), jsonMessage.room_settings.sit_count, rand_int)}}).toArray(async (err, results) => {
+                            //making array of situations from array off objects of situations
+                            for (let sit of results) {
+                                cards.push(sit.situation)
+                            }
+                        });
+                        //create all data object \\ send it
+                        let room_settings = {
+                            code: await generatorNotExist(generatorCode, client, collection_rooms),
+                            playersCount: Number(jsonMessage.room_settings.player_count),
+                            players: [],
+                            situations: cards,
+                            cards: await card_gen(jsonMessage.room_settings.player_count, jsonMessage.room_settings.card_count, allPictureFiles, rand_int)
+                        };
+                        rooms.push(room_settings);
+                        wsClient.send(JSON.stringify({content: "game_data", message: room_settings}));
+                    }
+                    create_room();
+                    break;
+
+
                 case 'connect_to_room':
                     let roomVariants = async () => {
-                        let room = await client.db().collection(collection_rooms).findOne({ code: jsonMessage.code })
-                        if (!!room) {
-                            let players = room.players
-                            if (players.length === room.playersCount) {
-                                wsClient.send(JSON.stringify({ action: "message", message: 'room already  fool lel -- =_=' }));
+                        let room = rooms.find(room => room.code == jsonMessage.code);
+                        if (room) {
+                            if (room.players.length === room.playersCount) {
+                                wsClient.send(JSON.stringify({ content: "message", message: 'room already  fool lel -- =_=' }));
                             } else {
-                                wsClient.send(JSON.stringify({ action: "message", message: `cards: ${room.cards[players.length]}` }))
-                                players.push(
+                                wsClient.send(JSON.stringify({ content: "message", message: `cards: ${room.cards[room.players.length]}` }))
+                                room.players.push(
                                     {
                                         name: jsonMessage.name,
                                         wsClient: wsClient
                                     })
-                                await client.db().collection(collection_rooms).updateOne(
-                                    { code: room.code },
-                                    {
-                                        $set: {
-                                            players: players
-                                        }
-                                    })
-                                // Тут должен быть масив всех всклиентов и имён
+                                //adding player's name and wsClient to rooms
+                                for (let i = 0; rooms.length; i++){
+                                    if (rooms[i].code == jsonMessage.code){
+                                        rooms[i] = room;
+                                        break;
+                                    }
+                                }
+                                let players_names = [];
+                                room.players.forEach(function (item, i, arr){
+                                    players_names.push(item.name);
+                                })
+                                room.players.forEach(function (item, i, arr){
+                                    item.wsClient.send(JSON.stringify({ content: "players_names", message: players_names }));
+                                })
+
                             }
                         } else {
-                            wsClient.send(JSON.stringify({ action: "message", message: 'room not  exists 404 -- 0_0' }))
+                            wsClient.send(JSON.stringify({ content: "message", message: 'room not  exists 404 -- 0_0' }))
                         }
                     }
                     roomVariants()
-
-                    // jsonMessage.code --> room id
-                    // jsonMessage.name --> p name add
-                    //wsClient --> add
-                    break;
-
-
-                case 'room_settings':
-                    new Promise(async (resolve, reject) => {
-                        // get random situations \\ send them
-                        const answ = (data) => {
-                            var dataToReturn = []
-                            for (sit of data) {
-                                dataToReturn.push(sit.situation)
-                            }
-                            return dataToReturn
-                        }
-                        await client.connect()
-                        await client.db().collection(collection_situations).find({ 'id': { $in: different_nums(await client.db().collection(collection_situations).countDocuments(), jsonMessage.room_settings.sit_count, rand_int) } }).toArray(async (err, results) => {
-
-                            resolve(answ(results))
-                        });
-                    }).then(async (data) => {
-                        //create all data object \\ send it
-                        return new Promise(async (resolve, reject) => {
-                            resolve({
-                                code: await generatorNotExist(generatorCode, client, collection_rooms),
-                                playersCount: Number(jsonMessage.room_settings.player_count),
-                                players: [],
-                                situations: data,
-                                cards: await card_gen(jsonMessage.room_settings.player_count, jsonMessage.room_settings.card_count, allPictureFiles, rand_int)
-                            });
-                        })
-                    }).then((data) => {
-                        client.db().collection(collection_rooms).insertOne(data);
-                        wsClient.send(JSON.stringify({ action: "message", message: data }));
-
-                    })
                     break;
 
 
@@ -116,11 +111,11 @@ function onConnect(wsClient) {
                     console.log(jsonMessage.room_name);
                     break;
                 default:
-                    console.log('Неизвестная команда');
+                    console.log('Unknown command');
                     break;
             }
         } catch (error) {
-            console.log('Ошибка', error);
+            console.log('Error', error);
         }
     });
 

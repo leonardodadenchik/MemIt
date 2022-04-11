@@ -9,6 +9,7 @@ let game_data = {
 
 }
 
+
 function send_room_data() {
     let room_settings = {
         player_count: document.getElementById("player_count").value,
@@ -25,7 +26,6 @@ window.onbeforeunload = function () {
 }
 
 
-
 function connect_to_room() {
     let room_name = document.getElementById("room_name").value;
     let player_name = document.getElementById("player_name").value;
@@ -34,11 +34,19 @@ function connect_to_room() {
     myWs.send(JSON.stringify({ content: 'connect_to_room', code: room_name, name: player_name}));
 
 }
+
+
+function start_game(){
+    app.go_to_game();
+}
+
+
 //test: kick_player(1);
 function kick_player(player_id){
     myWs.send(JSON.stringify({ content: 'kick_player', player_id: player_id, code: game_data.room_code }));
     game_data.room_code = "";
 }
+
 
 myWs.onmessage = function (message) {
     message = JSON.parse(message.data)
@@ -47,7 +55,7 @@ myWs.onmessage = function (message) {
             alert(message.message);
             break;
         case "game_data":
-            app.room_code = message.message.code;
+            document.getElementById("room_name").value = message.message.code;
             break;
         case "players_names":
             game_data.nicknames = message.message;
@@ -56,6 +64,8 @@ myWs.onmessage = function (message) {
             break;
         case "cards":
             game_data.cards = message.message;
+            //тут масив в message.message из кард и его по доброму бы засунуть в селект(не в жопу)
+            document.getElementById("cards_list").value = message.message;
             app.go_to_waiting_room();
             break;
         default:

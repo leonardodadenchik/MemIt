@@ -32,13 +32,9 @@
         <input type="submit" value="skip and go to connection" onclick="app.go_to_connection()"><br><br>
     </div>
 
-    <div v-show="visible_room_code">
-        {{room_code}}
-    </div>
-
     <div v-show="visible_second">
         <label>connect to the room,room code:</label><br>
-        <input type="text" id="room_name" value="default_room"><br><br>
+        <input type="text" id="room_name" value="code from your friend"><br><br>
 
         <label>NickName:</label><br>
         <input type="text" id="player_name" value="den"><br><br>
@@ -48,10 +44,15 @@
 
     <div v-show="visible_third">
         {{nicknames}}<br><br>
-        <input type="submit" value="start game" onclick="app.go_to_game()"><br><br>
+        <input type="submit" value="start game" onclick="start_game()"><br><br>
     </div>
     <div v-show="visible_fourth">
-        Хоба, твоя мать шлюха
+        <label>choose your card:</label><br>
+        <!--тут снизу селект в который нужно впихнуть данные из масива который в гейм жс-->
+        <form>
+            <select id="cards_list">
+            </select>
+        </form>
     </div>
 </div>
 <script>
@@ -60,10 +61,8 @@
             return {
                 visible_first: true,
                 visible_second: false,
-                visible_room_code:false,
                 visible_third: false,
                 visible_fourth: false,
-                room_code:"",
                 nicknames:"",
             }
         },
@@ -71,10 +70,8 @@
             go_to_connection() {
                 this.visible_first = false;
                 this.visible_second = true;
-                this.visible_room_code = true;
             },
             go_to_waiting_room() {
-                this.visible_room_code = false;
                 this.visible_second = false;
                 this.visible_third = true;
             },

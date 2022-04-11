@@ -4,10 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../css/css.css">
 </head>
 <script src="https://unpkg.com/vue@next"></script>
 <script src="../js_files/game.js"></script>
 <body onunload="console.log('Уже уходишь?')">
+<div class="wrapper">
+    <section>
+    <div class="wave wave1"></div>
+    <div class="wave wave2"></div>
+    <div class="wave wave3"></div>
+    <div class="wave wave4"></div>
+    </section>
 <div id = "app">
     <div v-show="visible_first">
         <label>Player count:</label><br>
@@ -20,6 +28,8 @@
         <input type="number" min="1" max="4" value="3" id="sit_count"><br><br>
 
         <input type="submit" value="Make room" onclick="send_room_data()"><br><br>
+
+        <input type="submit" value="skip and go to connection" onclick="app.go_to_connection()"><br><br>
     </div>
 
     <div v-show="visible_room_code">
@@ -66,6 +76,7 @@
         }
     }).mount('#app');
 </script>
+</div>
 </body>
 
 </html>

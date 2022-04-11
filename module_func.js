@@ -24,15 +24,15 @@ exports.different_nums = (max, count, rand_int) => {
 }
 
 
-exports.generatorNotExist = async (generatorCode, client, collection_rooms) => {
+exports.generatorNotExist = async (generatorCode, rooms) => {
     var attemp = generatorCode()
     //await client.connect();
 
-    if (! !!await client.db().collection(collection_rooms).findOne({ code: attemp })) { //if attemp exist !!db.req == true \\   !! to bool
+    if (! rooms.find(room => room.code == attemp)) { //if attemp exist !!db.req == true \\   !! to bool
         return attemp
     } else {
         //console.log(`exist: ${attemp}`)
-        return generatorNotExist(generatorCode, client, collection_rooms)
+        return generatorNotExist(generatorCode, rooms)
     }
 }
 

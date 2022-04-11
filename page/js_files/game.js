@@ -4,6 +4,7 @@ let myWs = new WebSocket(host);
 let game_data = {
     room_code: "",
     nicknames: "",
+    player_id: "",
 }
 
 function send_room_data() {
@@ -26,10 +27,16 @@ window.onbeforeunload = function () {
 function connect_to_room() {
     let room_name = document.getElementById("room_name").value;
     let player_name = document.getElementById("player_name").value;
+    game_data.room_code = room_name;
 
     app.go_to_waiting_room();
-    myWs.send(JSON.stringify({ content: 'connect_to_room', code: room_name.toString(), name: player_name.toString() }));
+    myWs.send(JSON.stringify({ content: 'connect_to_room', code: room_name, name: player_name}));
 
+}
+//test: kick_player(1);
+function kick_player(player_id){
+    myWs.send(JSON.stringify({ content: 'kick_player', player_id: player_id, code: game_data.room_code }));
+    game_data.room_code = "";
 }
 
 myWs.onmessage = function (message) {
@@ -39,12 +46,12 @@ myWs.onmessage = function (message) {
             console.log(message.message);
             break;
         case "game_data":
-            game_data.room_code = message.message.code;
-            app.room_code = game_data.room_code;
+            app.room_code = message.message.code;
             break;
         case "players_names":
             game_data.nicknames = message.message;
             app.nicknames = message.message;
+            game_data.player_id = message.player_id;
             break;
         default:
             console.log(Error);

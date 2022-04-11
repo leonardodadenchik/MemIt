@@ -57,7 +57,7 @@ function onConnect(wsClient) {
                         });
                         //create all data object \\ send it
                         let room_settings = {
-                            code: await generatorNotExist(generatorCode, client, collection_rooms),
+                            code: await generatorNotExist(generatorCode,rooms),
                             playersCount: Number(jsonMessage.room_settings.player_count),
                             players: [],
                             situations: cards,
@@ -95,8 +95,9 @@ function onConnect(wsClient) {
                                     players_names.push(item.name);
                                 })
                                 room.players.forEach(function (item, i, arr){
-                                    item.wsClient.send(JSON.stringify({ content: "players_names", message: players_names }));
+                                    item.wsClient.send(JSON.stringify({ content: "players_names", message: players_names, player_id: players_names.length}));
                                 })
+
 
                             }
                         } else {
@@ -109,6 +110,27 @@ function onConnect(wsClient) {
 
                 case 'disconnect':
                     console.log(jsonMessage.room_name);
+                    break;
+                case 'kick_player':
+                    if (jsonMessage.code) {
+                        for (let i = 0; rooms.length; i++) {
+                            if (rooms[i].code == jsonMessage.code) {
+                                rooms[i].players.splice(jsonMessage.player_id - 1, 1);
+                                let players_names = [];
+                                rooms[i].players.forEach(function (item, i, arr) {
+                                    players_names.push(item.name);
+                                })
+                                rooms[i].players.forEach(function (item, i, arr) {
+                                    item.wsClient.send(JSON.stringify({
+                                        content: "players_names",
+                                        message: players_names,
+                                        player_id: players_names.length
+                                    }));
+                                })
+                                break;
+                            }
+                        }
+                    }
                     break;
                 default:
                     console.log('Unknown command');

@@ -9,9 +9,9 @@ exports.rand_int = (min, max) => {
 }
 
 exports.different_nums = (max, count, rand_int) => {
-    var nums = [];
-    var is_it;
-    for (var i = 0; i < count; i++) {
+    let nums = [];
+    let is_it;
+    for (let i = 0; i < count; i++) {
         is_it = rand_int(1, max + 1);
         if (nums.includes(is_it)) {
             i -= 1;
@@ -25,11 +25,11 @@ exports.different_nums = (max, count, rand_int) => {
 
 
 exports.generatorNotExist = async (generatorCode, rooms) => {
-    var attemp = generatorCode()
+    let attempt = generatorCode()
     //await client.connect();
 
-    if (! rooms.find(room => room.code == attemp)) { //if attemp exist !!db.req == true \\   !! to bool
-        return attemp
+    if (! rooms.find(room => room.code === attempt)) { //if attemp exist !!db.req == true \\   !! to bool
+        return attempt
     } else {
         //console.log(`exist: ${attemp}`)
         return generatorNotExist(generatorCode, rooms)
@@ -39,10 +39,9 @@ exports.generatorNotExist = async (generatorCode, rooms) => {
 
 exports.getAllDirPhotoFiles = (dirPath, fs) => {
 
-    files = fs.readdirSync(dirPath)
+    let files = fs.readdirSync(dirPath)
 
-    arrayOfFiles = []
-
+    let arrayOfFiles = []
     files.forEach(function (file) {
 
         if (['.png', '.jpg', 'jpeg'].includes(file.slice(-4))) {
@@ -54,12 +53,12 @@ exports.getAllDirPhotoFiles = (dirPath, fs) => {
 
 exports.card_gen = (players_count, need_cards, img_files, rand_int) => {
 
-    var cards = [];
-    var player_cards = [];
+    let cards = [];
+    let player_cards = [];
 
     for (let i = 0; i < players_count; i++) {
         for (let j = 0; j < need_cards; j++) {
-            var card_id = rand_int(0, img_files.length);
+            let card_id = rand_int(0, img_files.length);
 
             if (cards.includes(img_files[card_id])) {
                 j -= 1;
@@ -74,41 +73,20 @@ exports.card_gen = (players_count, need_cards, img_files, rand_int) => {
 
     return player_cards
 }
-
-exports.getAllDirPhotoFiles = (dirPath, fs) => {
-
-    files = fs.readdirSync(dirPath)
-
-    arrayOfFiles = []
-
-    files.forEach(function (file) {
-
-        if (['.png', '.jpg', 'jpeg'].includes(file.slice(-4))) {
-            arrayOfFiles.push(file)
-        }
-    })
-    return arrayOfFiles
-}
-
-exports.card_gen = (players_count, need_cards, img_files, rand_int) => {
-
-    var cards = [];
-    var player_cards = [];
-
-    for (let i = 0; i < players_count; i++) {
-        for (let j = 0; j < need_cards; j++) {
-            var card_id = rand_int(0, img_files.length);
-
-            if (cards.includes(img_files[card_id])) {
-                j -= 1;
-            } else {
-                cards.push(img_files[card_id])
+exports.delete_player = (code,rooms,player_id) => {
+    if (code) {
+        for (let i = 0; rooms.length; i++) {
+            if (rooms[i].code == code) {
+                rooms[i].players.splice(player_id - 1, 1);
+                let players_names = [];
+                rooms[i].players.forEach(function (item, i, arr) {
+                    players_names.push(item.name);
+                })
+                rooms[i].players.forEach(function (item, i, arr) {
+                    item.wsClient.send(JSON.stringify({ content: "players_names", message: players_names, player_id: i+1}));
+                });
+                break;
             }
-
         }
-        player_cards.push(cards.slice(i * need_cards, i * need_cards + need_cards));
-
     }
-
-    return player_cards
 }

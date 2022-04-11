@@ -8,7 +8,7 @@
 </head>
 <script src="https://unpkg.com/vue@next"></script>
 <script src="../js_files/game.js"></script>
-<body onunload="console.log('Уже уходишь?')">
+<body>
 <div class="wrapper">
     <section>
     <div class="wave wave1"></div>
@@ -47,7 +47,11 @@
     </div>
 
     <div v-show="visible_third">
-        {{nicknames}}
+        {{nicknames}}<br><br>
+        <input type="submit" value="start game" onclick="app.go_to_game()"><br><br>
+    </div>
+    <div v-show="visible_fourth">
+        Хоба, твоя мать шлюха
     </div>
 </div>
 <script>
@@ -58,6 +62,7 @@
                 visible_second: false,
                 visible_room_code:false,
                 visible_third: false,
+                visible_fourth: false,
                 room_code:"",
                 nicknames:"",
             }
@@ -72,6 +77,10 @@
                 this.visible_room_code = false;
                 this.visible_second = false;
                 this.visible_third = true;
+            },
+            go_to_game(){
+                this.visible_third = false;
+                this.visible_fourth = true;
             }
         }
     }).mount('#app');

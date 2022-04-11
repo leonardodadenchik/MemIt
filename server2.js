@@ -15,10 +15,10 @@ const { rand_int } = require('./module_func')
 const { generatorNotExist } = require('./module_func')
 const { getAllDirPhotoFiles } = require('./module_func')
 const { card_gen } = require('./module_func')
+const { delete_player } = require('./module_func')
 
 const photo_dir = './page/images_library'
 const collection_situations = 'situations'
-const collection_rooms = 'rooms'
 const allPictureFiles = getAllDirPhotoFiles(photo_dir, fs)
 
 let rooms = []
@@ -61,7 +61,7 @@ function onConnect(wsClient) {
                             playersCount: Number(jsonMessage.room_settings.player_count),
                             players: [],
                             situations: cards,
-                            cards: await card_gen(jsonMessage.room_settings.player_count, jsonMessage.room_settings.card_count, allPictureFiles, rand_int)
+                            cards: card_gen(jsonMessage.room_settings.player_count, jsonMessage.room_settings.card_count, allPictureFiles, rand_int)
                         };
                         rooms.push(room_settings);
                         wsClient.send(JSON.stringify({content: "game_data", message: room_settings}));
@@ -72,12 +72,12 @@ function onConnect(wsClient) {
 
                 case 'connect_to_room':
                     let roomVariants = async () => {
-                        let room = rooms.find(room => room.code == jsonMessage.code);
+                        let room = rooms.find(room => room.code === jsonMessage.code);
                         if (room) {
                             if (room.players.length === room.playersCount) {
                                 wsClient.send(JSON.stringify({ content: "message", message: 'room already  fool lel -- =_=' }));
                             } else {
-                                wsClient.send(JSON.stringify({ content: "message", message: `cards: ${room.cards[room.players.length]}` }))
+                                wsClient.send(JSON.stringify({ content: "cards", message: `cards: ${room.cards[room.players.length]}` }))
                                 room.players.push(
                                     {
                                         name: jsonMessage.name,
@@ -85,17 +85,17 @@ function onConnect(wsClient) {
                                     })
                                 //adding player's name and wsClient to rooms
                                 for (let i = 0; rooms.length; i++){
-                                    if (rooms[i].code == jsonMessage.code){
+                                    if (rooms[i].code === jsonMessage.code){
                                         rooms[i] = room;
                                         break;
                                     }
                                 }
                                 let players_names = [];
-                                room.players.forEach(function (item, i, arr){
+                                room.players.forEach(function (item){
                                     players_names.push(item.name);
                                 })
-                                room.players.forEach(function (item, i, arr){
-                                    item.wsClient.send(JSON.stringify({ content: "players_names", message: players_names, player_id: players_names.length}));
+                                room.players.forEach(function (item,i){
+                                    item.wsClient.send(JSON.stringify({ content: "players_names", message: players_names, player_id: i+1}));
                                 })
 
 
@@ -109,28 +109,10 @@ function onConnect(wsClient) {
 
 
                 case 'disconnect':
-                    console.log(jsonMessage.room_name);
+                    delete_player(jsonMessage.code,rooms,jsonMessage.player_id);
                     break;
                 case 'kick_player':
-                    if (jsonMessage.code) {
-                        for (let i = 0; rooms.length; i++) {
-                            if (rooms[i].code == jsonMessage.code) {
-                                rooms[i].players.splice(jsonMessage.player_id - 1, 1);
-                                let players_names = [];
-                                rooms[i].players.forEach(function (item, i, arr) {
-                                    players_names.push(item.name);
-                                })
-                                rooms[i].players.forEach(function (item, i, arr) {
-                                    item.wsClient.send(JSON.stringify({
-                                        content: "players_names",
-                                        message: players_names,
-                                        player_id: players_names.length
-                                    }));
-                                })
-                                break;
-                            }
-                        }
-                    }
+                    delete_player(jsonMessage.code,rooms,jsonMessage.player_id);
                     break;
                 default:
                     console.log('Unknown command');

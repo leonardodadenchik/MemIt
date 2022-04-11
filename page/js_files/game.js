@@ -5,6 +5,8 @@ let game_data = {
     room_code: "",
     nicknames: "",
     player_id: "",
+    cards: "",
+
 }
 
 function send_room_data() {
@@ -19,7 +21,7 @@ function send_room_data() {
 
 
 window.onbeforeunload = function () {
-    myWs.send(JSON.stringify({ content: 'disconnect', room_name: game_data.room_code }));
+    myWs.send(JSON.stringify({ content: 'disconnect', player_id: game_data.player_id, code: game_data.room_code }));
 }
 
 
@@ -29,7 +31,6 @@ function connect_to_room() {
     let player_name = document.getElementById("player_name").value;
     game_data.room_code = room_name;
 
-    app.go_to_waiting_room();
     myWs.send(JSON.stringify({ content: 'connect_to_room', code: room_name, name: player_name}));
 
 }
@@ -43,7 +44,7 @@ myWs.onmessage = function (message) {
     message = JSON.parse(message.data)
     switch (message.content) {
         case "message":
-            console.log(message.message);
+            alert(message.message);
             break;
         case "game_data":
             app.room_code = message.message.code;
@@ -52,6 +53,10 @@ myWs.onmessage = function (message) {
             game_data.nicknames = message.message;
             app.nicknames = message.message;
             game_data.player_id = message.player_id;
+            break;
+        case "cards":
+            game_data.cards = message.message;
+            app.go_to_waiting_room();
             break;
         default:
             console.log(Error);

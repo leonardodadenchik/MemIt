@@ -2,11 +2,13 @@ exports.generatorCode = () => {
     return `f${(~~(Math.random() * 1e8)).toString(16)}`
 }
 
+
 exports.rand_int = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
+
 
 exports.different_nums = (max, count, rand_int) => {
     let nums = [];
@@ -51,6 +53,7 @@ exports.getAllDirPhotoFiles = (dirPath, fs) => {
     return arrayOfFiles
 }
 
+
 exports.card_gen = (players_count, need_cards, img_files, rand_int) => {
 
     let cards = [];
@@ -73,6 +76,8 @@ exports.card_gen = (players_count, need_cards, img_files, rand_int) => {
 
     return player_cards
 }
+
+
 exports.delete_player = (code,rooms,player_id) => {
     if (code) {
         for (let i = 0; rooms.length; i++) {
@@ -83,7 +88,7 @@ exports.delete_player = (code,rooms,player_id) => {
                     players_names.push(item.name);
                 })
                 rooms[i].players.forEach(function (item, i, arr) {
-                    item.wsClient.send(JSON.stringify({ content: "players_names", message: players_names, player_id: i+1}));
+                    item.wsClient.send(JSON.stringify({ content: "players_names", nicknames: players_names, player_id: i+1}));
                 });
                 break;
             }

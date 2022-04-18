@@ -6,8 +6,39 @@ let game_data = {
     nicknames: "",
     player_id: "",
     cards: "",
-
 }
+
+window.onbeforeunload = function () {
+    myWs.send(JSON.stringify({ content: 'disconnect', player_id: game_data.player_id, code: game_data.room_code }));
+}
+
+
+function go_to_connection() {
+    document.getElementById("visible_first").style.display = "none";
+    document.getElementById("visible_second").style.display = "block";
+}
+
+
+function go_to_waiting_room() {
+    document.getElementById("visible_second").style.display = "none";
+    document.getElementById("visible_third").style.display = "block";
+}
+
+
+function go_to_game() {
+    document.getElementById("visible_third").style.display = "none";
+    document.getElementById("visible_fourth").style.display = "block";
+}
+
+
+function start_game() {
+    if (game_data.player_id === 1) {
+        myWs.send(JSON.stringify({ content: 'start_game', room_code:game_data.room_code}));
+    }else{
+        alert("you haven't got permission");
+    }
+}
+
 
 function send_room_data() {
     let room_settings = {
@@ -15,52 +46,79 @@ function send_room_data() {
         card_count: document.getElementById("card_count").value,
         sit_count: document.getElementById("sit_count").value,
     };
-    app.go_to_connection();
+    go_to_connection();
     myWs.send(JSON.stringify({ content: 'room_creation', room_settings:room_settings}))
 }
-
-
-window.onbeforeunload = function () {
-    myWs.send(JSON.stringify({ content: 'disconnect', player_id: game_data.player_id, code: game_data.room_code }));
-}
-
 
 
 function connect_to_room() {
     let room_name = document.getElementById("room_name").value;
     let player_name = document.getElementById("player_name").value;
-    game_data.room_code = room_name;
 
     myWs.send(JSON.stringify({ content: 'connect_to_room', code: room_name, name: player_name}));
-
-}
-//test: kick_player(1);
-function kick_player(player_id){
-    myWs.send(JSON.stringify({ content: 'kick_player', player_id: player_id, code: game_data.room_code }));
-    game_data.room_code = "";
 }
 
-myWs.onmessage = function (message) {
-    message = JSON.parse(message.data)
-    switch (message.content) {
+function send_card(){
+    let card = document.getElementById("card_to_send").value;
+    if (game_data.cards.find((elem) => elem == card)) {
+        myWs.send(JSON.stringify({content: 'card', card: card,player_id:game_data.player_id,room_code:game_data.room_code}));
+    }else{
+        alert("you haven't got that card");
+    }
+}
+
+
+function kick_player(player_id) {
+    if (game_data.player_id === 1) {
+        myWs.send(JSON.stringify({content: 'kick_player', player_id: player_id, code: game_data.room_code}));
+    }else{
+        alert("you haven't got permission");
+    }
+}
+
+
+myWs.onmessage = function (jsonMessage) {
+    jsonMessage = JSON.parse(jsonMessage.data)
+    switch (jsonMessage.content) {
         case "message":
-            alert(message.message);
+            alert(jsonMessage.message);
             break;
-        case "game_data":
-            app.room_code = message.message.code;
+
+        case "code_for_creator":
+            document.getElementById("room_name").value = jsonMessage.message.code;
             break;
+
         case "players_names":
-            game_data.nicknames = message.message;
-            app.nicknames = message.message;
-            game_data.player_id = message.player_id;
+            game_data.nicknames = jsonMessage.nicknames;
+            game_data.player_id = jsonMessage.player_id;
+            document.getElementById("nicknames").innerHTML = game_data.nicknames;
             break;
-        case "cards":
-            game_data.cards = message.message;
-            app.go_to_waiting_room();
+
+        case "cards&room_code":
+            game_data.cards = jsonMessage.cards;
+            game_data.room_code = jsonMessage.room_code;
+            cards = document.getElementById("cards");
+            for (let element of jsonMessage.cards){
+                cards.innerHTML+=element+"<br>";
+            }
+            go_to_waiting_room();
+            break;
+
+        case "start_game":
+            go_to_game();
+            break;
+
+        case "situation":
+            document.getElementById("situation").innerHTML = jsonMessage.situation;
+            break;
+
+        case "card_status":
+            let player_cards = document.getElementById("players_cards");
+            jsonMessage.players.forEach((item,i) =>{
+                player_cards.innerHTML += item + ": " + jsonMessage.cards[i];
+            })
             break;
         default:
-            console.log(Error);
             break;
-
     }
 };

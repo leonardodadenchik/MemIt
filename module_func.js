@@ -69,7 +69,7 @@ exports.card_gen = (players_count, need_cards, img_files, rand_int) => {
                 cards.push(img_files[card_id])
             }
 
-        }
+        }   
         player_cards.push(cards.slice(i * need_cards, i * need_cards + need_cards));
 
     }

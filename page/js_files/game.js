@@ -1,4 +1,4 @@
-host = (location.origin.replace(/^http/, 'ws')+":8814/").replace(":3000", '');
+host = (location.origin.replace(/^http/, 'ws') + ":8814/").replace(":3000", '');
 let myWs = new WebSocket(host);
 
 let game_data = {
@@ -9,7 +9,7 @@ let game_data = {
 }
 
 window.onbeforeunload = function () {
-    myWs.send(JSON.stringify({ content: 'disconnect', player_id: game_data.player_id, code: game_data.room_code }));
+    myWs.send(JSON.stringify({content: 'disconnect', player_id: game_data.player_id, code: game_data.room_code}));
 }
 
 
@@ -33,8 +33,8 @@ function go_to_game() {
 
 function start_game() {
     if (game_data.player_id === 1) {
-        myWs.send(JSON.stringify({ content: 'start_game', room_code:game_data.room_code}));
-    }else{
+        myWs.send(JSON.stringify({content: 'start_game', room_code: game_data.room_code}));
+    } else {
         alert("you haven't got permission");
     }
 }
@@ -47,7 +47,7 @@ function send_room_data() {
         sit_count: document.getElementById("sit_count").value,
     };
     go_to_connection();
-    myWs.send(JSON.stringify({ content: 'room_creation', room_settings:room_settings}))
+    myWs.send(JSON.stringify({content: 'room_creation', room_settings: room_settings}))
 }
 
 
@@ -55,14 +55,19 @@ function connect_to_room() {
     let room_name = document.getElementById("room_name").value;
     let player_name = document.getElementById("player_name").value;
 
-    myWs.send(JSON.stringify({ content: 'connect_to_room', code: room_name, name: player_name}));
+    myWs.send(JSON.stringify({content: 'connect_to_room', code: room_name, name: player_name}));
 }
 
-function send_card(){
+function send_card() {
     let card = document.getElementById("card_to_send").value;
     if (game_data.cards.find((elem) => elem == card)) {
-        myWs.send(JSON.stringify({content: 'card', card: card,player_id:game_data.player_id,room_code:game_data.room_code}));
-    }else{
+        myWs.send(JSON.stringify({
+            content: 'card',
+            card: card,
+            player_id: game_data.player_id,
+            room_code: game_data.room_code
+        }));
+    } else {
         alert("you haven't got that card");
     }
 }
@@ -71,7 +76,7 @@ function send_card(){
 function kick_player(player_id) {
     if (game_data.player_id === 1) {
         myWs.send(JSON.stringify({content: 'kick_player', player_id: player_id, code: game_data.room_code}));
-    }else{
+    } else {
         alert("you haven't got permission");
     }
 }
@@ -98,8 +103,8 @@ myWs.onmessage = function (jsonMessage) {
             game_data.cards = jsonMessage.cards;
             game_data.room_code = jsonMessage.room_code;
             cards = document.getElementById("cards");
-            for (let element of jsonMessage.cards){
-                cards.innerHTML+=element+"<br>";
+            for (let element of jsonMessage.cards) {
+                cards.innerHTML += element + "<br>";
             }
             go_to_waiting_room();
             break;
@@ -114,8 +119,10 @@ myWs.onmessage = function (jsonMessage) {
 
         case "card_status":
             let player_cards = document.getElementById("players_cards");
-            jsonMessage.players.forEach((item,i) =>{
-                player_cards.innerHTML += item + ": " + jsonMessage.cards[i];
+            player_cards.innerHTML = "";
+            console.log(jsonMessage.players);
+            jsonMessage.players.forEach((item, i) => {
+                player_cards.innerHTML += item + ": " + jsonMessage.cards[i] + "<br>";
             })
             break;
         default:

@@ -152,9 +152,11 @@ function onConnect(wsClient) {
                 if (!room.players.find(player => player.card == "selecting...") && (room.votes == room.players.length)) {
                     next_step(room);
                 }
+
             } else if (jsonMessage.content === 'vote') {
                 let room = find_room_by_code(rooms, jsonMessage.room_code);
-                room.votes+=1;
+                room.votes += 1;
+                room.players[jsonMessage.vote - 1].votes += 1;
                 if (!room.players.find(player => player.card == "selecting...") && (room.votes == room.players.length)) {
                     next_step(room);
                 }

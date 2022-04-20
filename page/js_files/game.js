@@ -153,6 +153,6 @@ myWs.onmessage = function (jsonMessage) {
         game_data.is_voted = false;
         game_data.is_card_sent = false;
     } else if(jsonMessage.content === "end"){
-        alert("игра закончилась, опята");
+        alert(`игра закончилась, победитель: ${jsonMessage.winner}`);
     }
 };

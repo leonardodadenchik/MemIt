@@ -2,15 +2,18 @@ const fs = require("fs");
 
 const photoDir = "./page/images_library";
 
+
 const generatorCode = () => {
     return `f${(~~(Math.random() * 1e8)).toString(16)}`;
 };
+
 
 const randInt = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 };
+
 
 const differentNums = (maxValue, count) => {
     const getSet = (mySet) => {
@@ -22,6 +25,7 @@ const differentNums = (maxValue, count) => {
     return Array.from(getSet(new Set()));
 };
 
+
 const generatorNotExist = async (rooms) => {
     let attempt = generatorCode();
 
@@ -30,6 +34,7 @@ const generatorNotExist = async (rooms) => {
         : attempt;
 };
 
+
 const getAllDirPhotoFiles = (dirPath) => {
     return fs.readdirSync(dirPath).filter((file) => {
         return [".png", ".jpg", "jpeg"].includes(file.slice(-4));
@@ -37,6 +42,7 @@ const getAllDirPhotoFiles = (dirPath) => {
 };
 
 const allPictureFiles = getAllDirPhotoFiles(photoDir);
+
 
 const cardGen = (playersCount, needCards) => {
     let playersCards = Array(playersCount)
@@ -56,6 +62,7 @@ const cardGen = (playersCount, needCards) => {
 
     return playersCards;
 };
+
 
 const delete_player = (room_code, rooms, player_id) => {
     if (room_code) {
@@ -77,6 +84,7 @@ const delete_player = (room_code, rooms, player_id) => {
     }
 };
 
+
 const find_room_by_code = (rooms, room_code) => {
     return (rooms.find(room => room.code === room_code))
 }
@@ -87,6 +95,7 @@ const send_to_all = (room, message) => {
     })
 }
 
+
 const update_card_status = (room) => {
     let players = [];
     let cards = [];
@@ -94,20 +103,25 @@ const update_card_status = (room) => {
         players.push(player.name);
         cards.push(player.card);
     }
-    send_to_all(room,JSON.stringify({
+    send_to_all(room, JSON.stringify({
         content: "card_status", players: players, cards: cards
     }))
 }
 
+
 const next_step = (room) => {
-    if (room.step == room.cards[0].length){
-        send_to_all(room, JSON.stringify({content: "end"}));
-    }else {
+    if (room.step == room.cards[0].length) {
+        room.players.sort((a, b) => b.votes-a.votes)
+        send_to_all(room, JSON.stringify({content: "end",winner: room.players[0].name}));
+    } else {
         room.step += 1;
         room.votes = 0;
         room.players.map((item) => item.card = "selecting...");
         update_card_status(room);
         send_to_all(room, JSON.stringify({content: "next_step"}));
+        send_to_all(room, JSON.stringify({
+            content: "situation", situation: room.situations[room.step - 1]
+        }))
     }
 
 }

@@ -57,33 +57,68 @@ const cardGen = (playersCount, needCards) => {
     return playersCards;
 };
 
-const delete_player = (code, rooms, player_id) => {
-    if (code) {
-        for (let i = 0; rooms.length; i++) {
-            if (rooms[i].code == code) {
-                rooms[i].players.splice(player_id - 1, 1);
-                let players_names = [];
-                rooms[i].players.forEach(function (item) {
-                    players_names.push(item.name);
-                });
-                rooms[i].players.forEach(function (item, i) {
-                    item.wsClient.send(
-                        JSON.stringify({
-                            content: "players_names",
-                            message: players_names,
-                            player_id: i + 1,
-                        })
-                    );
-                });
-                break;
-            }
-        }
+const delete_player = (room_code, rooms, player_id) => {
+    if (room_code) {
+        let room = find_room_by_code(rooms, room_code)
+        room.players.splice(player_id - 1, 1);
+        let players_names = [];
+        room.players.forEach(function (item) {
+            players_names.push(item.name);
+        });
+        room.players.forEach(function (item, i) {
+            item.wsClient.send(
+                JSON.stringify({
+                    content: "players_names",
+                    nicknames: players_names,
+                    player_id: i + 1,
+                })
+            );
+        });
     }
 };
+
+const find_room_by_code = (rooms, room_code) => {
+    return (rooms.find(room => room.code === room_code))
+}
+
+const send_to_all = (room, message) => {
+    room.players.forEach(function (item) {
+        item.wsClient.send(message);
+    })
+}
+
+const update_card_status = (room) => {
+    let players = [];
+    let cards = [];
+    for (let player of room.players) {
+        players.push(player.name);
+        cards.push(player.card);
+    }
+    send_to_all(room,JSON.stringify({
+        content: "card_status", players: players, cards: cards
+    }))
+}
+
+const next_step = (room) => {
+    if (room.step == room.cards[0].length){
+        send_to_all(room, JSON.stringify({content: "end"}));
+    }else {
+        room.step += 1;
+        room.votes = 0;
+        room.players.map((item) => item.card = "selecting...");
+        update_card_status(room);
+        send_to_all(room, JSON.stringify({content: "next_step"}));
+    }
+
+}
 
 module.exports = {
     differentNums,
     generatorNotExist,
     cardGen,
     delete_player,
+    find_room_by_code,
+    send_to_all,
+    update_card_status,
+    next_step,
 };

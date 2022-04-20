@@ -54,7 +54,16 @@
 
     <input type="text" id="card_to_send">
     <input type="submit" value="выбрать карту" onclick = "send_card()"><br><br>
-    <div id = "players_cards"></div>
+
+    <div id = "players_cards"></div><br>
+    <label>you vote for player:</label>
+    <input type="number" id="vote" value="1">
+    <input type="submit" value="vote" onclick = "vote()"><br><br>
+
+    <div id = "card_status">You have not chosen a card yet</div>
+    <div id = "vote_status">You have not voted yet</div>
+
+
 
 </div>
 

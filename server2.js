@@ -16,6 +16,7 @@ const {
     send_to_all,
     update_card_status,
     next_step,
+    step_timer,
 } = require("./module_func");
 
 const PORT = process.env.PORT || 3000;
@@ -136,14 +137,14 @@ function onConnect(wsClient) {
 
             } else if (jsonMessage.content === 'start_game') {
                 let room = find_room_by_code(rooms, jsonMessage.room_code);
-                if (room.step == 0) {
-                    room.step = 1;
-                    send_to_all(room, JSON.stringify({content: "start_game"}))
-                    send_to_all(room, JSON.stringify({
-                        content: "situation", situation: room.situations[room.step - 1]
-                    }))
-                    update_card_status(room);
-                }
+                room.step = 1;
+                send_to_all(room, JSON.stringify({content: "start_game"}))
+                send_to_all(room, JSON.stringify({
+                    content: "situation", situation: room.situations[room.step - 1]
+                }))
+                update_card_status(room);
+                step_timer(30,room);
+
 
             } else if (jsonMessage.content === 'card') {
                 let room = find_room_by_code(rooms, jsonMessage.room_code);

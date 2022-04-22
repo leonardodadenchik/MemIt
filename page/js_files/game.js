@@ -1,3 +1,4 @@
+//global variables
 host = (location.origin.replace(/^http/, 'ws') + ":8814/").replace(":3000", '');
 let myWs = new WebSocket(host);
 
@@ -9,6 +10,8 @@ let game_data = {
     is_card_sent: false,
     is_voted: false,
 }
+let timer;
+let timeout_for_timer;
 
 window.onbeforeunload = function () {
     myWs.send(JSON.stringify({content: 'disconnect', player_id: game_data.player_id, room_code: game_data.room_code}));
@@ -111,6 +114,19 @@ function vote() {
 }
 
 
+function step_timer(seconds){
+    let show_timer = document.getElementById("timer");
+    show_timer.innerHTML = seconds;
+    timer = setInterval(() => {
+        show_timer.innerHTML = Number(show_timer.innerHTML) - 1;
+    }, 1000);
+    timeout_for_timer = setTimeout(() => clearTimeout(timer), seconds*1000)
+}
+function interrupt_timer(){
+    clearInterval(timer);
+    clearTimeout(timeout_for_timer);
+}
+
 myWs.onmessage = function (jsonMessage) {
     jsonMessage = JSON.parse(jsonMessage.data)
     if (jsonMessage.content === "message") {
@@ -135,6 +151,7 @@ myWs.onmessage = function (jsonMessage) {
 
     } else if (jsonMessage.content === "start_game") {
         go_to_game();
+        step_timer(30);
 
     } else if (jsonMessage.content === "situation") {
         document.getElementById("situation").innerHTML = jsonMessage.situation;
@@ -147,6 +164,8 @@ myWs.onmessage = function (jsonMessage) {
         })
 
     } else if(jsonMessage.content === "next_step"){
+        interrupt_timer();
+        step_timer(30);
         alert("Next step, choose your card and vote for some player");
         document.getElementById("card_status").innerHTML = "You have not chosen a card yet";
         document.getElementById("vote_status").innerHTML = "You have not voted yet";

@@ -2,6 +2,7 @@ const fs = require("fs");
 
 const photoDir = "./page/images_library";
 
+let timer;
 
 const generatorCode = () => {
     return `f${(~~(Math.random() * 1e8)).toString(16)}`;
@@ -122,8 +123,15 @@ const next_step = (room) => {
         send_to_all(room, JSON.stringify({
             content: "situation", situation: room.situations[room.step - 1]
         }))
+        clearTimeout(timer);
+        step_timer(30,room);
     }
 
+}
+
+
+const step_timer = (seconds,room) => {
+    timer = setTimeout(next_step, seconds*1000,room);
 }
 
 module.exports = {
@@ -135,4 +143,5 @@ module.exports = {
     send_to_all,
     update_card_status,
     next_step,
+    step_timer
 };

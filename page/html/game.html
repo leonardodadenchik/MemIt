@@ -1,79 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <link href="../css/css.css" rel="stylesheet" type="text/css" />
+  </head>
+  <script src="../js_files/game.js"></script>
+  <body>
+    <div class="wrapper">
+      <section>
+        <div class="wave wave1"></div>
+        <div class="wave wave2"></div>
+        <div class="wave wave3"></div>
+        <div class="wave wave4"></div>
+      </section>
+      <div id="visible_first">
+        <!--room making-->
+        <label>Player count:</label><br />
+        <input
+          id="player_count"
+          max="5"
+          min="2"
+          type="number"
+          value="3"
+        /><br /><br />
 
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-	<link href="../css/css.css" rel="stylesheet" type="text/css">
-</head>
-<script src="../js_files/game.js"></script>
-<body>
-<div class="wrapper">
-	<section>
-		<div class="wave wave1"></div>
-		<div class="wave wave2"></div>
-		<div class="wave wave3"></div>
-		<div class="wave wave4"></div>
-	</section>
-	<div id="visible_first">
-		<label>Player count:</label><br>
-		<input id="player_count" max="5" min="2" type="number" value="3"><br><br>
+        <label>Card count:</label><br />
+        <input
+          id="card_count"
+          max="7"
+          min="4"
+          type="number"
+          value="4"
+        /><br /><br />
 
-		<label>Card count:</label><br>
-		<input id="card_count" max="7" min="4" type="number" value="4"><br><br>
+        <label>Situation count:</label><br />
+        <input
+          id="sit_count"
+          max="4"
+          min="1"
+          type="number"
+          value="3"
+        /><br /><br />
 
-		<label>Situation count:</label><br>
-		<input id="sit_count" max="4" min="1" type="number" value="3"><br><br>
+        <input
+          onclick="send_room_data()"
+          type="submit"
+          value="Make room"
+        /><br /><br />
 
-		<input onclick="send_room_data()" type="submit" value="Make room"><br><br>
+        <input
+          onclick="go_to_connection()"
+          type="submit"
+          value="skip and go to connection"
+        /><br /><br />
+      </div>
 
-		<input onclick="go_to_connection()" type="submit" value="skip and go to connection"><br><br>
-	</div>
+      <div id="visible_second">
+        <!--room connectng-->
 
-	<div id="visible_second">
-		<label>connect to the room,room code:</label><br>
-		<input id="room_name" type="text" value="default_room"><br><br>
+        <label>connect to the room,room code:</label><br />
+        <input id="room_name" type="text" value="default_room" /><br /><br />
 
-		<label>NickName:</label><br>
-		<input id="player_name" type="text" value="den"><br><br>
+        <label>NickName:</label><br />
+        <input id="player_name" type="text" value="den" /><br /><br />
 
-		<input onclick="connect_to_room()" type="submit" value="connect"><br><br>
-	</div>
+        <input
+          onclick="connect_to_room()"
+          type="submit"
+          value="connect"
+        /><br /><br />
+      </div>
 
-	<div id="visible_third">
-		<div id="nicknames"></div>
-		<br>
-		<input onclick="start_game()" type="submit" value="start game"><br><br>
-	</div>
+      <div id="visible_third">
+        <!--room waiting-->
 
-	<div id="visible_fourth">
-		<label>time for step left:</label>
-		<div id="timer"></div>
-		<br>
+        <div id="nicknames"></div>
+        <br />
+        <input
+          onclick="start_game()"
+          type="submit"
+          value="start game"
+        /><br /><br />
+      </div>
 
-		<label>situation:</label><br>
-		<div id="situation"></div>
-		<br>
+      <div id="visible_fourth">
+        <!--game-->
 
-		<label>choose your card:</label><br>
-		<div id="cards"></div>
-		<br>
+        <label>time for step left:</label>
+        <div id="timer"></div>
+        <br />
 
-		<input id="card_to_send" type="text">
-		<input onclick="send_card()" type="submit" value="выбрать карту"><br><br>
+        <label>situation:</label><br />
+        <div id="situation"></div>
+        <br />
 
-		<div id="players_cards"></div>
-		<br>
-		<label>you vote for player:</label>
-		<input id="vote" type="number" value="1">
-		<input onclick="vote()" type="submit" value="vote"><br><br>
+        <label>choose your card:</label><br />
+        <div id="cards"></div>
+        <br />
 
-		<div id="card_status">You have not chosen a card yet</div>
-		<div id="vote_status">You have not voted yet</div>
+        <input id="card_to_send" type="text" />
+        <input
+          onclick="send_card()"
+          type="submit"
+          value="выбрать карту"
+        /><br /><br />
 
+        <div id="players_cards"></div>
+        <br />
+        <label>you vote for player:</label>
+        <input id="vote" type="number" value="1" />
+        <input onclick="vote()" type="submit" value="vote" /><br /><br />
 
-	</div>
-
-</div>
-</body>
+        <div id="card_status">You have not chosen a card yet</div>
+        <div id="vote_status">You have not voted yet</div>
+      </div>
+    </div>
+  </body>
 </html>

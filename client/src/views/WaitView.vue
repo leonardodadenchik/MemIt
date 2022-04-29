@@ -14,25 +14,12 @@
 
 <script>
 // @ is an alias to /src
-import { myWs } from "/myWs/myWs.js";
 export default {
   name: "WaitView",
   components: {},
   data() {
-    return {
-      roomCode: "",
-      myName: "",
-    };
+    return {};
   },
-  mounted() {
-    myWs.send(
-      JSON.stringify({
-        content: "connect_to_room",
-        room_code: this.roomCode,
-        name: this.myName,
-        // eslint-disable-next-line
-      }),
-    );
-  },
+  mounted() {},
 };
 </script>

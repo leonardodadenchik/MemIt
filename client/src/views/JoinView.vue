@@ -1,16 +1,14 @@
 <template>
   <div class="join">
     <h1>This is a join page</h1>
-    <!--room connectng-->
 
-    <label>connect to the room,room code:</label><br />
-    <input type="text" value="default_room" /><br /><br />
+    <label>Room code:</label><br />
+    <input type="text" v-model="code" /><br /><br />
 
-    <label>NickName:</label><br />
-    <input type="text" value="den" /><br /><br />
+    <label>Nickname:</label><br />
+    <input type="text" v-model="name" /><br /><br />
 
-    <!-- onclick="connect_to_room()"-->
-    <input type="submit" value="connect" /><br /><br />
+    <button @click="connectAttemp">Connect</button>
   </div>
 </template>
 
@@ -18,8 +16,29 @@
 // @ is an alias to /src
 
 export default {
-  name: "ConnectView",
-  components: {},
-  mounted() {},
+  data() {
+    return {
+      code: this.propCode,
+      name: "Dan",
+    };
+  },
+  props: {
+    propCode: {
+      type: String,
+      required: true,
+    },
+    request: {
+      type: Object,
+      required: false,
+    },
+  },
+  methods: {
+    connectAttemp() {
+      this.$router.push({
+        name: "connect",
+        params: { code: this.code, playerData: this.name },
+      });
+    },
+  },
 };
 </script>

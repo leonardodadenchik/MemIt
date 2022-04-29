@@ -5,7 +5,8 @@
     <router-link to="/create">create</router-link> |
     <router-link to="/join">join</router-link> |
     <router-link to="/wait">wait</router-link> |
-    <router-link to="/game">game</router-link>
+    <router-link to="/game">game</router-link> |
+    <router-link to="/joinbylink/ff1234d">link</router-link>
   </nav>
   <router-view />
 </template>

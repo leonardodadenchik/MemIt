@@ -2,25 +2,71 @@
   <div class="create">
     <h1>This is a create page</h1>
     <!--room making-->
-    <label>Player count:</label><br />
-    <input max="5" min="2" type="number" value="3" /><br /><br />
-
     <label>Card count:</label><br />
-    <input max="7" min="4" type="number" value="4" /><br /><br />
+    <input max="7" min="4" type="number" v-model="cardCount" /><br /><br />
 
     <label>Situation count:</label><br />
-    <input max="4" min="1" type="number" value="3" /><br /><br />
+    <input max="4" min="1" type="number" v-model="situationCount" /><br /><br />
 
     <!--onclick="send_room_data()"-->
-    <input type="submit" value="Make room" /><br /><br />
+    <button @click="roomCreatereques">Make room</button>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
+import { myWs } from "../../myWs/myWs.js";
 
 export default {
-  name: "CreateView",
-  components: {},
+  data() {
+    return {
+      cardCount: 4,
+      situationCount: 3,
+    };
+  },
+  methods: {
+    roomCreatereques() {
+      new Promise((resolve, reject) => {
+        myWs.send(
+          JSON.stringify({
+            content: "room_creation",
+            /*
+              TODO: delete player_count from requests
+             */
+            room_settings: {
+              player_count: "5",
+              card_count: this.cardCount,
+              sit_count: this.situationCount,
+            },
+            // eslint-disable-next-line
+          }),
+        );
+        myWs.onmessage = (jsonMessage) => {
+          jsonMessage = JSON.parse(jsonMessage.data);
+          if (jsonMessage.content == "code_for_creator") {
+            if (jsonMessage.message.code.length > 7) {
+              resolve(jsonMessage.message.code);
+            } else {
+              reject();
+            }
+          }
+        };
+      })
+        .then((code) => {
+          //here redirect to connect with props: code pData
+          this.$router.push({
+            name: "connect",
+            params: { code: code, playerData: "Dan" },
+          });
+        })
+        .catch(() => {
+          /*
+        TODO: error catching, send to => notFund 404
+        */
+          this.$router.push({
+            path: "/error",
+          });
+        });
+    },
+  },
 };
 </script>

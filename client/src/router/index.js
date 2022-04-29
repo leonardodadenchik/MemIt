@@ -9,47 +9,56 @@ const routes = [
   {
     path: "/play",
     name: "play",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/PlayView.vue"),
   },
   {
     path: "/create",
     name: "create",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CreateView.vue"),
   },
   {
     path: "/join",
     name: "join",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/JoinView.vue"),
+    props: true,
+  },
+  {
+    path: "/connect",
+    name: "connect",
+    component: () =>
+      import(
+        /* webpackChunkName: "about" */ "../views/notContent/connectingProc.vue"
+      ),
+    props: true,
+  },
+  {
+    path: "/joinbylink/:roomCode",
+    name: "joinByLink",
+    component: () =>
+      import(
+        /* webpackChunkName: "about" */ "../views/notContent/JoinByLink.vue"
+      ),
   },
   {
     path: "/wait",
     name: "wait",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/WaitView.vue"),
   },
   {
     path: "/game",
     name: "game",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/GameView.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)",
+    name: "notFound",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/NotFund/errorPage.vue"),
   },
 ];
 

@@ -1,22 +1,53 @@
-const {add_user,check_user} = require("./db_modules/mongo")
+const {add_user, check_user} = require("./db_modules/mongo")
 const jwt = require('jsonwebtoken');
+const jwt_parameters = require("./jwt_parametrs/jwt_parametrs");
+const json = require("body-parser");
 
-const sign_in = async (user_data) => {
-	let expire_time = 48*60**2+Math.floor(Date.now() / 1000);
-	let token = jwt.sign({user:user_data.username},"popka2489$@$#cO!~_",{expiresIn:"48h"});
-	console.log(jwt.verify(token,"popka2489$@$#cO!~_"));
-	return new Promise(async (resolve) =>
-		resolve(await add_user(user_data.username, user_data.password))
-	)
+
+const new_tokens = function(username){
+	let token = jwt.sign({user: username}, jwt_parameters.t_secret,{expiresIn:20});
+	let refresh_token = jwt.sign({user: username}, jwt_parameters.r_t_secret,{expiresIn:60});
+	return {
+		token: token,
+		refresh_token: refresh_token,
+	};
 }
 
-const log_in = async (user_data) => {
-	return new Promise(async (resolve) => {
-		resolve(await check_user(user_data.username,user_data.password));
-	})
+const sign_in = async (request, response) => {
+	request = request.body;
+	add_user(request.username, request.password).then((result) => {
+		if (result == "You were successfully registered") {
+			response.json(new_tokens(request.username));
+		} else {
+			response.json(result);
+		}
+	});
 }
-sign_in({username:"sdfsdf",password:"sdffsfdsfs"});
+
+const log_in = async (request, response) => {
+	request = request.body;
+	check_user(request.username, request.password).then(function(result) {
+		if (result == "token") {
+			response.json(new_tokens(request.username));
+		} else {
+			response.json(result);
+		}
+	});
+}
+
+const get_new_tokens = (request,response) => {
+	request = request.body;
+	jwt.verify(request.refresh_token,jwt_parameters.r_t_secret,(err, result)=>{
+		if (err){
+			response.json("refresh token expired, log_in please");
+		}else{
+			response.json(new_tokens("username"));
+		}
+	});
+}
+
 module.exports = {
 	sign_in,
-	log_in
+	log_in,
+	get_new_tokens,
 }

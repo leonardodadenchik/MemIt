@@ -5,11 +5,17 @@ const wsServer = new WebSocket.Server({port: 8814});
 const jsonParser = express.json();
 
 const {
-	delete_player, find_room_by_code, send_to_all, update_card_status, next_step, step_timer,
-} = require("./modules/room_administration");
+	delete_player,
+	find_room_by_code,
+	send_to_all,
+	update_card_status,
+	next_step,
+	step_timer,}= require("./modules/room_administration");
 const {create_room} = require("./modules/room_creation");
 const {connect_to_room} = require("./modules/room_connection");
-const {sign_in,log_in} = require("./modules/authentication");
+const {sign_in,
+	log_in,
+	get_new_tokens} = require("./modules/authentication");
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,14 +24,9 @@ let rooms = [];
 
 app.use(express.static(__dirname + "/page"));
 
-app.post("/registration", jsonParser, function (request, response) {
-
-	sign_in(request.body).then((result)=>response.json(result));
-});
-app.post("/log_in", jsonParser, function (request, response) {
-
-	log_in(request.body).then((result)=>response.json(result));
-});
+app.post("/registration", jsonParser, sign_in);
+app.post("/log_in", jsonParser, log_in);
+app.post("/refresh_token",jsonParser,get_new_tokens);
 
 app.listen(PORT, () => console.log("Server is working!"));
 

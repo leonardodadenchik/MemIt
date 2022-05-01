@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
-const WebSocket = require("ws");
-const wsServer = new WebSocket.Server({port: 8814});
+const {Server} = require("ws");
+const wsServer = new Server({port: 8814});
 const jsonParser = express.json();
 
 const {
@@ -13,9 +13,12 @@ const {
 	step_timer,}= require("./modules/room_administration");
 const {create_room} = require("./modules/room_creation");
 const {connect_to_room} = require("./modules/room_connection");
-const {sign_in,
+const {
+	sign_in,
 	log_in,
-	get_new_tokens} = require("./modules/authentication");
+	get_new_tokens,
+	token_verification}= require("./modules/authentication");
+const {token} = require("mysql/lib/protocol/Auth");
 
 const PORT = process.env.PORT || 3000;
 
@@ -47,7 +50,7 @@ function onConnect(wsClient) {
 				create_room(jsonMessage.room_settings, rooms)
 					.then((room) => {
 						rooms.push(room);
-						wsClient.send(JSON.stringify({content: "code_for_creator", message: room}));
+						wsClient.send(JSON.stringify({content: "code_for_creator", code: room.code}));
 					})
 
 			} else if (jsonMessage.content === "connect_to_room") {
@@ -65,7 +68,7 @@ function onConnect(wsClient) {
 					})
 				} else {
 					wsClient.send(JSON.stringify({
-						content: "message", message: "room not  exists 404 -- 0_0",
+						content: "connectingAns", status: "roomNotFound",
 					}));
 				}
 
@@ -94,7 +97,7 @@ function onConnect(wsClient) {
 				let room = find_room_by_code(rooms, jsonMessage.room_code);
 				room.players[jsonMessage.player_id - 1].card = jsonMessage.card;
 				update_card_status(room);
-				if (!room.players.find(player => player.card == "selecting...") && (room.votes == room.players.length)) {
+				if (!room.players.find(player => player.card === "selecting...") && (room.votes === room.players.length)) {
 					next_step(room);
 				}
 
@@ -102,11 +105,17 @@ function onConnect(wsClient) {
 				let room = find_room_by_code(rooms, jsonMessage.room_code);
 				room.votes += 1;
 				room.players[jsonMessage.vote - 1].votes += 1;
-				if (!room.players.find(player => player.card == "selecting...") && (room.votes == room.players.length)) {
+				if (!room.players.find(player => player.card === "selecting...") && (room.votes === room.players.length)) {
 					next_step(room);
 				}
 
-			} else {
+			}else if(jsonMessage.content === 'verify_token'){
+				if(token_verification(jsonMessage.token)){
+					wsClient.send(JSON.stringify({content:"message",message:"token_is_valid"}));
+				}else{
+					wsClient.send(JSON.stringify({content:"message",message:"err"}));
+				}
+			}else {
 				console.log('Unknown command');
 			}
 		} catch (error) {

@@ -1,6 +1,7 @@
 node_modules
 /.idea
 ./functionTests.js
+test.js
 
 /.vscode
 /client/node_modules

@@ -9,7 +9,6 @@ mongoose.connect(mongoApiKey, {useUnifiedTopology: true, useNewUrlParser: true})
 const {
 	differentNums
 } = require("../calculations/calculations")
-const {promise} = require("bcrypt/promises");
 
 const situations = new Schema({
 	id: Number,

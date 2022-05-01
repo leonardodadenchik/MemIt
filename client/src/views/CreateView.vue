@@ -14,8 +14,7 @@
 </template>
 
 <script>
-import { myWs } from "../../myWs/myWs.js";
-
+import { myWs } from "../assets/myWs/myWs.js";
 export default {
   data() {
     return {
@@ -43,8 +42,8 @@ export default {
         myWs.onmessage = (jsonMessage) => {
           jsonMessage = JSON.parse(jsonMessage.data);
           if (jsonMessage.content == "code_for_creator") {
-            if (jsonMessage.message.code.length > 7) {
-              resolve(jsonMessage.message.code);
+            if (jsonMessage.code.length > 7) {
+              resolve(jsonMessage.code);
             } else {
               reject();
             }
@@ -55,7 +54,7 @@ export default {
           //here redirect to connect with props: code pData
           this.$router.push({
             name: "connect",
-            params: { code: code, playerData: "Dan" },
+            params: { code: code },
           });
         })
         .catch(() => {

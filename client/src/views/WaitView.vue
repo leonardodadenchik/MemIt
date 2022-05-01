@@ -4,7 +4,9 @@
     <!--room waiting-->
 
     <!--here players names-->
-    <div id="nicknames">here players names</div>
+    <div v-for="player in players" :key="player.name">
+      <div class="player">{{ player.name }}</div>
+    </div>
     <br />
 
     <!--onclick="start_game()"-->
@@ -18,7 +20,22 @@ export default {
   name: "WaitView",
   components: {},
   data() {
-    return {};
+    return {
+      players: [
+        {
+          name: "1",
+        },
+        {
+          name: "2",
+        },
+        {
+          name: "3",
+        },
+        {
+          name: "4",
+        },
+      ],
+    };
   },
   mounted() {},
 };

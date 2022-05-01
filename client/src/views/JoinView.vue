@@ -13,11 +13,12 @@
 </template>
 
 <script>
+import playerData from "../assets/playerData/playerData.js";
 export default {
   data() {
     return {
       code: this.propCode,
-      name: "Dan",
+      name: playerData.name,
     };
   },
   props: {
@@ -34,8 +35,13 @@ export default {
     connectAttemp() {
       this.$router.push({
         name: "connect",
-        params: { code: this.code, playerData: this.name },
+        params: { code: this.code },
       });
+    },
+  },
+  watch: {
+    name(newVal) {
+      playerData.name = newVal;
     },
   },
 };

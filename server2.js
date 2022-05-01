@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
-const WebSocket = require("ws");
-const wsServer = new WebSocket.Server({ port: 8814 });
+const { Server } = require("ws");
+const wsServer = new Server({ port: 8814 });
 const jsonParser = express.json();
 
 const {
@@ -14,7 +14,13 @@ const {
 } = require("./modules/room_administration");
 const { create_room } = require("./modules/room_creation");
 const { connect_to_room } = require("./modules/room_connection");
-const { sign_in, log_in } = require("./modules/authentication");
+const {
+  sign_in,
+  log_in,
+  get_new_tokens,
+  token_verification,
+} = require("./modules/authentication");
+const { token } = require("mysql/lib/protocol/Auth");
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,12 +28,9 @@ let rooms = [];
 
 app.use(express.static(__dirname + "/page"));
 
-app.post("/registration", jsonParser, function (request, response) {
-  sign_in(request.body).then((result) => response.json(result));
-});
-app.post("/log_in", jsonParser, function (request, response) {
-  log_in(request.body).then((result) => response.json(result));
-});
+app.post("/registration", jsonParser, sign_in);
+app.post("/log_in", jsonParser, log_in);
+app.post("/refresh_token", jsonParser, get_new_tokens);
 
 app.listen(PORT, () => console.log("Server is working!"));
 
@@ -46,10 +49,8 @@ function onConnect(wsClient) {
       if (jsonMessage.content === "room_creation") {
         create_room(jsonMessage.room_settings, rooms).then((room) => {
           rooms.push(room);
-          console.log("roomCreated");
           wsClient.send(
-            JSON.stringify({ content: "code_for_creator", message: room }),
-            // here just code
+            JSON.stringify({ content: "code_for_creator", code: room.code }),
           );
         });
       } else if (jsonMessage.content === "connect_to_room") {
@@ -72,8 +73,8 @@ function onConnect(wsClient) {
         } else {
           wsClient.send(
             JSON.stringify({
-              content: "message",
-              message: "room not  exists 404 -- 0_0",
+              content: "connectingAns",
+              status: "roomNotFound",
             }),
           );
         }
@@ -104,8 +105,8 @@ function onConnect(wsClient) {
         room.players[jsonMessage.player_id - 1].card = jsonMessage.card;
         update_card_status(room);
         if (
-          !room.players.find((player) => player.card == "selecting...") &&
-          room.votes == room.players.length
+          !room.players.find((player) => player.card === "selecting...") &&
+          room.votes === room.players.length
         ) {
           next_step(room);
         }
@@ -114,10 +115,18 @@ function onConnect(wsClient) {
         room.votes += 1;
         room.players[jsonMessage.vote - 1].votes += 1;
         if (
-          !room.players.find((player) => player.card == "selecting...") &&
-          room.votes == room.players.length
+          !room.players.find((player) => player.card === "selecting...") &&
+          room.votes === room.players.length
         ) {
           next_step(room);
+        }
+      } else if (jsonMessage.content === "verify_token") {
+        if (token_verification(jsonMessage.token)) {
+          wsClient.send(
+            JSON.stringify({ content: "message", message: "token_is_valid" }),
+          );
+        } else {
+          wsClient.send(JSON.stringify({ content: "message", message: "err" }));
         }
       } else {
         console.log("Unknown command");

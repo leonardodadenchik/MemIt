@@ -7,58 +7,51 @@ const routes = [
     component: () => import("../views/HomeView.vue"),
   },
   {
+    path: "/about",
+    name: "about",
+    component: () => import("../views/AboutView."),
+  },
+  {
     path: "/play",
     name: "play",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/PlayView.vue"),
+    component: () => import("../views/PlayView.vue"),
   },
   {
     path: "/create",
     name: "create",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CreateView.vue"),
+    component: () => import("../views/CreateView.vue"),
   },
   {
     path: "/join",
     name: "join",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/JoinView.vue"),
+    component: () => import("../views/JoinView.vue"),
     props: true,
   },
   {
     path: "/connect",
     name: "connect",
-    component: () =>
-      import(
-        /* webpackChunkName: "about" */ "../views/notContent/connectingProc.vue"
-      ),
+    component: () => import("../views/notContent/connectingProc.vue"),
     props: true,
   },
   {
     path: "/joinbylink/:roomCode",
     name: "joinByLink",
-    component: () =>
-      import(
-        /* webpackChunkName: "about" */ "../views/notContent/JoinByLink.vue"
-      ),
+    component: () => import("../views/notContent/JoinByLink.vue"),
   },
   {
     path: "/wait",
     name: "wait",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/WaitView.vue"),
+    component: () => import("../views/WaitView.vue"),
   },
   {
     path: "/game",
     name: "game",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/GameView.vue"),
+    component: () => import("../views/GameView.vue"),
   },
   {
     path: "/:pathMatch(.*)",
     name: "notFound",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/NotFund/errorPage.vue"),
+    component: () => import("../views/NotFund/errorPage.vue"),
   },
 ];
 

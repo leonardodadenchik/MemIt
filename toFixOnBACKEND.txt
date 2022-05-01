@@ -1,0 +1,22 @@
+ok: room_creation, connect_to_room
+
+code_for_creator {
+    code
+}
+
+connect_to_room:
+    after conecting attemp send {
+        content: connectingAns,
+        status: connectedToRoom/roomIsFool/roomNotFound
+        //params if connected sucsess
+        paramethers: {
+            cards(own), situations(all)
+        }
+    }
+
+start sending players updetes OnlyAfter got messege connected
+    on players updetes doesn't matter newPlayerNick or allPlayerNicksArr(better)
+
+
+
+  

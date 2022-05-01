@@ -49,6 +49,7 @@ function onConnect(wsClient) {
           console.log("roomCreated");
           wsClient.send(
             JSON.stringify({ content: "code_for_creator", message: room }),
+            // here just code
           );
         });
       } else if (jsonMessage.content === "connect_to_room") {

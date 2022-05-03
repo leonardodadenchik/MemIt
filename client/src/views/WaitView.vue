@@ -4,39 +4,59 @@
     <!--room waiting-->
 
     <!--here players names-->
-    <div v-for="player in players" :key="player.name">
-      <div class="player">{{ player.name }}</div>
+    <div v-for="(player, idx) in roomPlayers" :key="idx" class="playersBlocks">
+      <div class="roomPlayer">
+        <p>{{ idx + 1 }} - {{ player }}</p>
+        <button :id="idx">x</button>
+      </div>
     </div>
     <br />
 
     <!--onclick="start_game()"-->
-    <input type="submit" value="start game" /><br /><br />
+    <button>StartGame</button>
+    <button>Exit</button>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
+import myWs from "../assets/myWs/myWs.js";
+import playerData from "../assets/playerData/playerData.js";
+
 export default {
-  name: "WaitView",
-  components: {},
   data() {
     return {
-      players: [
-        {
-          name: "1",
-        },
-        {
-          name: "2",
-        },
-        {
-          name: "3",
-        },
-        {
-          name: "4",
-        },
-      ],
+      roomPlayers: this.propPlayerList || [playerData.name],
     };
   },
-  mounted() {},
+  // ? maby addishioinal props
+  props: {
+    propPlayerList: {
+      type: Array,
+      required: true,
+    },
+    code: {
+      type: String,
+      required: true,
+    },
+  },
+  created() {
+    const playersUpdateFunc = () => {
+      myWs.onmessage = (jsonMessage) => {
+        jsonMessage = JSON.parse(jsonMessage.data);
+        switch (jsonMessage.content) {
+          case "players_names":
+            this.roomPlayers = jsonMessage.nicknames;
+            break;
+        }
+      };
+    };
+    var timer = setInterval(() => {
+      myWs.readyState == 0 ||
+        (() => {
+          playersUpdateFunc();
+          clearInterval(timer);
+        })();
+    }, 10);
+  },
 };
 </script>

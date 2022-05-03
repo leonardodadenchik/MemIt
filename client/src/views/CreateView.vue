@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { myWs } from "../assets/myWs/myWs.js";
+import myWs from "../assets/myWs/myWs.js";
 export default {
   data() {
     return {
@@ -28,9 +28,6 @@ export default {
         myWs.send(
           JSON.stringify({
             content: "room_creation",
-            /*
-              TODO: delete player_count from requests
-             */
             room_settings: {
               player_count: "5",
               card_count: this.cardCount,
@@ -42,7 +39,7 @@ export default {
         myWs.onmessage = (jsonMessage) => {
           jsonMessage = JSON.parse(jsonMessage.data);
           if (jsonMessage.content == "code_for_creator") {
-            if (jsonMessage.code.length > 7) {
+            if (jsonMessage.code) {
               resolve(jsonMessage.code);
             } else {
               reject();
@@ -51,16 +48,12 @@ export default {
         };
       })
         .then((code) => {
-          //here redirect to connect with props: code pData
           this.$router.push({
             name: "connect",
             params: { code: code },
           });
         })
         .catch(() => {
-          /*
-        TODO: error catching, send to => notFund 404
-        */
           this.$router.push({
             path: "/error",
           });

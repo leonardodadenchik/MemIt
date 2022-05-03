@@ -3,7 +3,9 @@
     <h1>This is a join page</h1>
 
     <label>Room code:</label><br />
-    <input type="text" v-model="code" /><br /><br />
+    <input type="text" v-model="code" /><br />
+    <div v-if="!!request">{{ request }}</div>
+    <br v-if="!!!request" /><br />
 
     <label>Nickname:</label><br />
     <input type="text" v-model="name" /><br /><br />
@@ -24,10 +26,10 @@ export default {
   props: {
     propCode: {
       type: String,
-      required: true,
+      required: false,
     },
     request: {
-      type: Object,
+      type: String,
       required: false,
     },
   },

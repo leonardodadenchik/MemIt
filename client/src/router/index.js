@@ -43,6 +43,7 @@ const routes = [
     path: "/wait",
     name: "wait",
     component: () => import("../views/WaitView.vue"),
+    props: true,
   },
   {
     path: "/game",

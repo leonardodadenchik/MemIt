@@ -5,10 +5,16 @@
 </template>
 
 <script>
-// @ is an alias to /src
-
 export default {
-  name: "GameView",
-  components: {},
+  props: {
+    playerNameList: {
+      type: Array,
+      required: true,
+    },
+    code: {
+      type: String,
+      required: true,
+    },
+  },
 };
 </script>

@@ -40,18 +40,26 @@ export default {
           }
         };
       };
-      var timer = setInterval(() => {
-        myWs.readyState == 0 ||
-          (() => {
-            connectMe();
+      // if no code in props, i send err
+      if (this.code) {
+        var timer = setInterval(() => {
+          if (myWs.readyState != 0) {
             clearInterval(timer);
-          })();
-      }, 10);
+            connectMe();
+          }
+        }, 100);
+      } else {
+        reject("noProps");
+      }
     })
-      .then((playerslist) => {
+      .then((playerNameList) => {
         this.$router.push({
           name: "wait",
-          params: { propPlayerList: playerslist, code: this.code },
+          params: {
+            propPlayerList: playerNameList,
+            code: this.code,
+            propMyId: playerNameList.length,
+          },
         });
       })
       .catch((reason) => {
@@ -63,7 +71,12 @@ export default {
                 request: reason,
               },
             })
-          : console.error(reason);
+          : (() => {
+              console.error(reason);
+              this.$router.push({
+                path: "error",
+              });
+            })();
       });
   },
 };

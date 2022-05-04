@@ -49,6 +49,7 @@ const routes = [
     path: "/game",
     name: "game",
     component: () => import("../views/GameView.vue"),
+    props: true,
   },
   {
     path: "/:pathMatch(.*)",

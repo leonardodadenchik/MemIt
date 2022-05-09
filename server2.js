@@ -28,7 +28,7 @@ let rooms = [];
 
 app.use(express.static(__dirname + "/page"));
 
-app.post("/registration", jsonParser, sign_in);
+app.post("/sign_in", jsonParser, sign_in);
 app.post("/log_in", jsonParser, log_in);
 app.post("/refresh_token", jsonParser, get_new_tokens);
 
@@ -55,49 +55,15 @@ function onConnect(wsClient) {
         });
       } else if (jsonMessage.content === "connect_to_room") {
         let room = find_room_by_code(rooms, jsonMessage.room_code);
-        if (room) {
-          connect_to_room(wsClient, jsonMessage, room, rooms);
-          let players_names = [];
-          room.players.forEach(function (item) {
-            players_names.push(item.name);
-          });
-          room.players.forEach(function (item, i) {
-            item.wsClient.send(
-              JSON.stringify({
-                content: "players_names",
-                nicknames: players_names,
-                player_id: i + 1,
-              }),
-            );
-          });
-        } else {
-          wsClient.send(
-            JSON.stringify({
-              content: "connectingAns",
-              status: "roomNotFound",
-            }),
-          );
-        }
+        connect_to_room(wsClient, jsonMessage, room, rooms);
       } else if (jsonMessage.content === "delete_player") {
         if (jsonMessage.room_code) {
-          let room = find_room_by_code(rooms, jsonMessage.room_code);
-          if (room.players.length === 1) {
-            rooms.splice(rooms.indexOf(room), 1);
-          } else {
-            delete_player(room, jsonMessage.player_id);
-          }
+          delete_player(rooms, jsonMessage.player_id, jsonMessage.room_code);
         }
       } else if (jsonMessage.content === "start_game") {
         let room = find_room_by_code(rooms, jsonMessage.room_code);
         room.step = 1;
         send_to_all(room, JSON.stringify({ content: "start_game" }));
-        send_to_all(
-          room,
-          JSON.stringify({
-            content: "situation",
-            situation: room.situations[room.step - 1],
-          }),
-        );
         update_card_status(room);
         step_timer(30, room);
       } else if (jsonMessage.content === "card") {
@@ -121,13 +87,17 @@ function onConnect(wsClient) {
           next_step(room);
         }
       } else if (jsonMessage.content === "verify_token") {
-        if (token_verification(jsonMessage.token)) {
-          wsClient.send(
-            JSON.stringify({ content: "message", message: "token_is_valid" }),
-          );
-        } else {
-          wsClient.send(JSON.stringify({ content: "message", message: "err" }));
-        }
+        token_verification(jsonMessage.token).then((result) => {
+          if (result === true) {
+            wsClient.send(
+              JSON.stringify({ content: "message", message: "token_is_valid" }),
+            );
+          } else {
+            wsClient.send(
+              JSON.stringify({ content: "message", message: "err" }),
+            );
+          }
+        });
       } else {
         console.log("Unknown command");
       }

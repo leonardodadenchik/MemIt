@@ -19,11 +19,11 @@ const situations_model = model("situation", situations);
 const User = new Schema({
 	username: String,
 	password: String,
-	refresh_token_number: Number,
+	email: String,
+	isActive: Boolean,
 })
 
 const user_model = model('User', User);
-
 
 const get_situations = async (room_settings) => {
 	let situations_to_get = [];
@@ -48,21 +48,22 @@ const get_situations = async (room_settings) => {
 }
 
 
-const add_user = async (username, password) => {
-	return new Promise((resolve)=>{
-		const hashPassword = String(bcrypt.hashSync(password, 10));
-		user_model.findOne({username: username}).then(function (result) {
+const add_user = async (username, email, password) => {
+	return new Promise((resolve) => {
+		let hashPassword = String(bcrypt.hashSync(password, 10));
+		user_model.findOne({email: email}).then(function (result) {
 			if (result) {
-				 resolve("This username already taken");
+				resolve("This email already taken");
 			} else {
 				let user = new user_model({
 					username: username,
+					email: email,
 					password: hashPassword,
 				});
 				user.save(function (err) {
 					if (err) resolve("err");
 				})
-				resolve("You were successfully registered");
+				resolve("You were successfully registered,now validate your mail");
 			}
 		}).catch(function (err) {
 			resolve("err");
@@ -70,11 +71,12 @@ const add_user = async (username, password) => {
 	})
 }
 
-const check_user = async (username, password) => {
+const check_user = async (email, password) => {
 	return new Promise((resolve) => {
-		user_model.findOne({username: username}).then(function (result) {
-			if (!result) resolve("Username isn't valid");
-			const validPassword = bcrypt.compareSync(password, result.password);
+		user_model.findOne({email: email}).then(function (result) {
+			if (!result) resolve("Email isn't valid");
+			if (!result.isActive) resolve("Account is not active");
+			let validPassword = bcrypt.compareSync(password, result.password);
 			if (!validPassword) resolve("Password isn't valid");
 			resolve("token");
 		}).catch(function (err) {

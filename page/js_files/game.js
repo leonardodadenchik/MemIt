@@ -12,16 +12,23 @@ let game_data = {
 let timer;
 let timeout_for_timer;
 
-setInterval(function (){
+setInterval(function () {
 	//get payload and check expire time
 	let t_payload = JSON.parse(window.atob(localStorage.getItem("token").split(".")[1]));
-	if(t_payload.exp-10<Math.floor(Date.now()/1000)){
+	if (t_payload.exp - 10 < Math.floor(Date.now() / 1000)) {
 		get_new_tokens();
 	}
-},3000)
+}, 3000)
+
+function verify_token() {
+	myWs.send(JSON.stringify({content: 'verify_token', token: localStorage.getItem("token")}));
+}
 
 async function get_new_tokens() {
-	let data_to_send = JSON.stringify({token: localStorage.getItem("token"),refresh_token: localStorage.getItem("refresh_token")});
+	let data_to_send = JSON.stringify({
+		token: localStorage.getItem("token"),
+		refresh_token: localStorage.getItem("refresh_token")
+	});
 	let response = await fetch("/refresh_token", {
 		method: 'POST',
 		credentials: 'omit',
@@ -31,18 +38,19 @@ async function get_new_tokens() {
 		body: data_to_send
 	});
 	let result = await response.json();
-	if(result.token){
-		localStorage.setItem("token",result.token);
-		localStorage.setItem("refresh_token",result.refresh_token);
+	if (result.token) {
+		localStorage.setItem("token", result.token);
+		localStorage.setItem("refresh_token", result.refresh_token);
 
-	}else{
+	} else {
 		console.log(result);
 	}
 }
-//registration("username","password");
-async function registration(username, password) {
-	let data_to_send = JSON.stringify({username: username, password: password})
-	let response = await fetch("/registration", {
+
+//sign_in("username","email","password");
+async function sign_in(username, email, password) {
+	let data_to_send = JSON.stringify({username: username, email: email, password: password})
+	let response = await fetch("/sign_in", {
 		method: 'POST',
 		credentials: 'omit',
 		headers: {
@@ -51,18 +59,12 @@ async function registration(username, password) {
 		body: data_to_send
 	});
 	let result = await response.json();
-	if(result.token){
-		localStorage.setItem("token",result.token);
-		localStorage.setItem("refresh_token",result.refresh_token);
-
-	}else{
-		console.log(result)
-	}
+	console.log(result);
 }
 
-//log_in("username","password");
-async function log_in(username, password) {
-	let data_to_send = JSON.stringify({username: username, password: password})
+//log_in("email","password");
+async function log_in(email, password) {
+	let data_to_send = JSON.stringify({email: email, password: password})
 	let response = await fetch("/log_in", {
 		method: 'POST',
 		credentials: 'omit',
@@ -72,16 +74,15 @@ async function log_in(username, password) {
 		body: data_to_send
 	});
 	let result = await response.json();
-	if(result.token){
-		localStorage.setItem("token",result.token);
-		localStorage.setItem("refresh_token",result.refresh_token);
+	if (result.token) {
+		localStorage.setItem("token", result.token);
+		localStorage.setItem("refresh_token", result.refresh_token);
 
-	}else{
+	} else {
 		console.log(result)
 	}
 
 }
-
 
 //я блять ниже больше не полезу, сам это говно разгребай
 window.onbeforeunload = function () {
@@ -229,16 +230,12 @@ myWs.onmessage = function (jsonMessage) {
 				cards.innerHTML += element + "<br>";
 			}
 			go_to_waiting_room();
-		}else{
+		} else {
 			alert(jsonMessage.status);
 		}
 	} else if (jsonMessage.content === "start_game") {
 		go_to_game();
 		step_timer(30);
-
-	} else if (jsonMessage.content === "situation") {
-		document.getElementById("situation").innerHTML = jsonMessage.situation;
-
 	} else if (jsonMessage.content === "card_status") {
 		let player_cards = document.getElementById("players_cards");
 		player_cards.innerHTML = "";
@@ -246,7 +243,9 @@ myWs.onmessage = function (jsonMessage) {
 			player_cards.innerHTML += item + ": " + jsonMessage.cards[i] + "<br>";
 		})
 
-	} else if (jsonMessage.content === "next_step") {
+	}else if(jsonMessage.content === "kick"){
+		alert("you were kiked,Bro...");
+	}else if (jsonMessage.content === "next_step") {
 		interrupt_timer();
 		step_timer(30);
 		alert("Next step, choose your card and vote for some player");

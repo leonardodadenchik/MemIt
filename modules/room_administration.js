@@ -4,21 +4,29 @@ const fs = require("fs");
 let timer;
 
 
-const delete_player = (room, player_id) => {
-	room.players.splice(player_id - 1, 1);
-	let players_names = [];
-	room.players.forEach(function (item) {
-		players_names.push(item.name);
-	});
-	room.players.forEach(function (item, i) {
-		item.wsClient.send(
-			JSON.stringify({
-				content: "players_names",
-				nicknames: players_names,
-				player_id: i + 1,
-			})
-		);
-	});
+const delete_player = (rooms, player_id,room_code) => {
+	let room = find_room_by_code(rooms, room_code);
+	if (room) {
+		room.players[player_id - 1].wsClient.send(JSON.stringify({content: "kick"}))
+		if (room.players.length === 1) {
+			rooms.splice(rooms.indexOf	(room), 1);
+		} else {
+			room.players.splice(player_id - 1, 1);
+			let players_names = [];
+			room.players.forEach(function (item) {
+				players_names.push(item.name);
+			});
+			room.players.forEach(function (item, i) {
+				item.wsClient.send(
+					JSON.stringify({
+						content: "players_names",
+						nicknames: players_names,
+						player_id: i + 1,
+					})
+				);
+			});
+		}
+	}
 };
 
 
@@ -56,9 +64,6 @@ const next_step = (room) => {
 		room.players.map((item) => item.card = "selecting...");
 		update_card_status(room);
 		send_to_all(room, JSON.stringify({content: "next_step"}));
-		send_to_all(room, JSON.stringify({
-			content: "situation", situation: room.situations[room.step - 1]
-		}))
 		clearTimeout(timer);
 		step_timer(30, room);
 	}

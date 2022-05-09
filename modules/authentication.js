@@ -1,12 +1,31 @@
 const {add_user, check_user} = require("./db_modules/mongo")
 const jwt = require('jsonwebtoken');
 const jwt_parameters = require("./jwt_parametrs/jwt_parametrs");
-const json = require("body-parser");
+const json = require("body-parser")
+const nodemailer = require('nodemailer');
 
+const validation_mail = async function (username,email) {
+	let transporter = nodemailer.createTransport({
+		service: 'gmail',
+		auth: {
+			user: "idea.memit@gmail.com",
+			pass: "Dolgih_is_legend",
+		},
+	})
 
-const new_tokens = function (username) {
-	let token = jwt.sign({user: username}, jwt_parameters.t_secret, {expiresIn: 20});
-	let refresh_token = jwt.sign({user: username}, jwt_parameters.r_t_secret, {expiresIn: 60});
+	let result = await transporter.sendMail({
+		from: '"MemIt" <idea.memit@gmail.com>',
+		to: email,
+		subject: 'Doing your mom',
+		text: `This message was sent from your mom's pussy,${username}`,
+	})
+
+	console.log(result)
+}
+
+const new_tokens = function (email) {
+	let token = jwt.sign({email: email}, jwt_parameters.t_secret, {expiresIn: 20});
+	let refresh_token = jwt.sign({email: email}, jwt_parameters.r_t_secret, {expiresIn: 60});
 	return {
 		token: token,
 		refresh_token: refresh_token,
@@ -15,22 +34,23 @@ const new_tokens = function (username) {
 
 const sign_in = async (request, response) => {
 	request = request.body;
-	add_user(request.username, request.password).then((result) => {
-		if (result == "You were successfully registered") {
-			response.json(new_tokens(request.username));
-		} else {
+	add_user(request.username,request.email, request.password).then((result) => {
+		if (result) {
 			response.json(result);
+			validation_mail(request.username,request.email);
+		} else {
+			response.json("err");
 		}
 	});
 }
 
 const log_in = async (request, response) => {
 	request = request.body;
-	check_user(request.username, request.password).then(function (result) {
+	check_user(request.email, request.password).then(function (result) {
 		if (result === "token") {
-			response.json(new_tokens(request.username));
+			response.json(new_tokens(request.email));
 		} else {
-			response.json("err");
+			response.json(result);
 		}
 	});
 }
@@ -41,7 +61,7 @@ const get_new_tokens = (request, response) => {
 		if (err) {
 			response.json("refresh token expired, log_in please");
 		} else {
-			response.json(new_tokens(result.username));
+			response.json(new_tokens(result.email));
 		}
 	});
 }
@@ -52,7 +72,7 @@ const token_verification = (token) => {
 			if (result) {
 				resolve(true);
 			} else {
-				resolve("err");
+				resolve(false);
 			}
 
 		});

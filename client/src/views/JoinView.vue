@@ -16,6 +16,8 @@
 
 <script>
 import playerData from "../assets/playerData/playerData.js";
+//import myWs from "../assets/myWs/myWs.js";
+//myWs.onmessage = () => {};
 export default {
   data() {
     return {

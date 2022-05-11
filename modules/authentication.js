@@ -4,7 +4,7 @@ const jwt_parameters = require("./jwt_parametrs/jwt_parametrs");
 const json = require("body-parser")
 const nodemailer = require('nodemailer');
 
-const validation_mail = async function (username,email) {
+const validation_mail = async function (username,email,player_id) {
 	let transporter = nodemailer.createTransport({
 		service: 'gmail',
 		auth: {
@@ -17,7 +17,7 @@ const validation_mail = async function (username,email) {
 		from: '"MemIt" <idea.memit@gmail.com>',
 		to: email,
 		subject: 'Doing your mom',
-		text: `This message was sent from your mom's pussy,${username}`,
+		text: `Your activation code is ${player_id}`,
 	})
 
 	console.log(result)
@@ -35,11 +35,11 @@ const new_tokens = function (email) {
 const sign_in = async (request, response) => {
 	request = request.body;
 	add_user(request.username,request.email, request.password).then((result) => {
-		if (result) {
-			response.json(result);
-			validation_mail(request.username,request.email);
+		if (result.player_id) {
+
+			validation_mail(request.username,request.email,result.player_id);
 		} else {
-			response.json("err");
+			response.json(result);
 		}
 	});
 }

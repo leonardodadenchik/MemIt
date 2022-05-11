@@ -237,6 +237,7 @@ myWs.onmessage = function (jsonMessage) {
 		go_to_game();
 		step_timer(30);
 	} else if (jsonMessage.content === "card_status") {
+		console.log(jsonMessage);
 		let player_cards = document.getElementById("players_cards");
 		player_cards.innerHTML = "";
 		jsonMessage.players.forEach((item, i) => {
@@ -245,6 +246,7 @@ myWs.onmessage = function (jsonMessage) {
 
 	}else if(jsonMessage.content === "kick"){
 		alert("you were kiked,Bro...");
+
 	}else if (jsonMessage.content === "next_step") {
 		interrupt_timer();
 		step_timer(30);
@@ -253,6 +255,7 @@ myWs.onmessage = function (jsonMessage) {
 		document.getElementById("vote_status").innerHTML = "You have not voted yet";
 		game_data.is_voted = false;
 		game_data.is_card_sent = false;
+
 	} else if (jsonMessage.content === "end") {
 		alert(`игра закончилась, победитель: ${jsonMessage.winner}`);
 	}

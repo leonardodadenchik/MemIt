@@ -63,7 +63,7 @@ const add_user = async (username, email, password) => {
 				user.save(function (err) {
 					if (err) resolve("err");
 				})
-				resolve("You were successfully registered,now validate your mail");
+				resolve({player_id:user.id});
 			}
 		}).catch(function (err) {
 			resolve("err");

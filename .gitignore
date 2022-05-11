@@ -3,5 +3,4 @@ node_modules
 ./functionTests.js
 test.js
 
-/.vscode
 /client/node_modules

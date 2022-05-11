@@ -1,0 +1,5 @@
+{
+  "eslint.options": {
+    "configFile": "/Users/hasty_files/VsCode projects/mergeVueBack/client/babel.config.js"
+  }
+}

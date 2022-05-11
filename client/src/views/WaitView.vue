@@ -1,11 +1,17 @@
 <template>
   <div class="wait">
     <h1>This is a wait page</h1>
-
+    <p>Your code is: {{ code }}</p>
+    <button @click="copyLink()">copyLink</button>
+    <hr />
     <div v-for="(player, idx) in roomPlayers" :key="idx" class="playersBlocks">
       <div class="roomPlayer">
         <p>{{ idx + 1 }} - {{ player }}</p>
-        <button :id="idx + 1" @click="playerKick($event.currentTarget.id)">
+        <button
+          v-if="myid == 1"
+          :id="idx + 1"
+          @click="playerKick($event.currentTarget.id)"
+        >
           x
         </button>
       </div>
@@ -13,8 +19,8 @@
 
     <br />
 
-    <button @click="startMyGame">StartGame</button>
-    <button @click="playerKick(myid)">Exit</button>
+    <button v-if="myid == 1" @click="startMyGame()">StartGame</button>
+    <button @click="exitGame()">Exit</button>
   </div>
 </template>
 
@@ -50,9 +56,19 @@ export default {
         switch (jsonMessage.content) {
           case "players_names":
             this.roomPlayers = jsonMessage.nicknames;
+            this.myid = jsonMessage.player_id;
             break;
           case "start_game":
             this.gotGameStart();
+            break;
+          case "kick":
+            this.$router.push({
+              name: "join",
+              params: {
+                propCode: this.code,
+                request: "You have been kicked from room, ggwp Nooooobby",
+              },
+            });
             break;
         }
       };
@@ -60,7 +76,11 @@ export default {
     gotGameStart() {
       this.$router.push({
         name: "game",
-        params: { playerNameList: this.roomPlayers, code: this.code },
+        params: {
+          propPlayerNameList: this.roomPlayers,
+          code: this.code,
+          myId: this.myid,
+        },
       });
     },
     startMyGame() {
@@ -74,22 +94,30 @@ export default {
       this.gotGameStart();
     },
     /*
-    TODO: 1.Message onYourKick,
-    TODO: 2.Check can player do kick, // sercver \ client
-    TODO: 3.Make yourself kick,
-    TODO: 4.IsKing(Leader) checking from backend
-    TODO: 5.StartGame (get and start)
+    TODO: 1.Message Exit // need backend assist
     */
-    playerKick(eventData) {
-      console.log(eventData);
+    exitGame() {
+      this.playerKick(this.myid);
+      this.$router.push({
+        name: "join",
+        params: { propCode: this.code, request: "exit?" },
+      });
+    },
+    playerKick(id) {
       myWs.send(
         JSON.stringify({
           content: "delete_player",
           room_code: this.code,
-          player_id: eventData,
+          player_id: id,
           // eslint-disable-next-line
         }),
       );
+    },
+    getJoinLink() {
+      return `${location.origin}/joinByLink/${this.code}`;
+    },
+    copyLink() {
+      navigator.clipboard.writeText(this.getJoinLink());
     },
   },
   created() {

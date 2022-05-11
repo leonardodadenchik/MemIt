@@ -7,13 +7,7 @@
     <div v-for="(player, idx) in roomPlayers" :key="idx" class="playersBlocks">
       <div class="roomPlayer">
         <p>{{ idx + 1 }} - {{ player }}</p>
-        <button
-          v-if="myid == 1"
-          :id="idx + 1"
-          @click="playerKick($event.currentTarget.id)"
-        >
-          x
-        </button>
+        <button v-if="myid == 1" @click="playerKick(idx + 1)">x</button>
       </div>
     </div>
 

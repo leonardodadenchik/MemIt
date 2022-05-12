@@ -115,11 +115,6 @@ export default {
     },
   },
   created() {
-    if (!(this.propPlayerList && this.code)) {
-      this.$router.push({
-        path: "error",
-      });
-    }
     var timer = setInterval(() => {
       if (myWs.readyState != 0) {
         clearInterval(timer);

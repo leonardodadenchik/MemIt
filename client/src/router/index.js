@@ -33,6 +33,12 @@ const routes = [
     name: "connect",
     component: () => import("../views/notContent/connectingProc.vue"),
     props: true,
+    beforeEnter(to, from) {
+      if (from.name !== "create" && from.name !== "join") {
+        console.log(from);
+        return { path: "error" };
+      }
+    },
   },
   {
     path: "/joinbylink/:roomCode",
@@ -44,12 +50,22 @@ const routes = [
     name: "wait",
     component: () => import("../views/WaitView.vue"),
     props: true,
+    beforeEnter(to, from) {
+      if (from.name !== "connect") {
+        return { path: "error" };
+      }
+    },
   },
   {
     path: "/game",
     name: "game",
     component: () => import("../views/GameView.vue"),
     props: true,
+    beforeEnter(to, from) {
+      if (from.name !== "wait") {
+        return { path: "error" };
+      }
+    },
   },
   {
     path: "/:pathMatch(.*)",

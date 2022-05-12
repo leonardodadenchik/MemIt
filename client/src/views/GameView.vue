@@ -37,24 +37,16 @@
 <script>
 /*
 TODO: убрать 1 next_step(ss)
-      убирать возможность выбирать карту после того как походил сам
-
 */
 import gameData from "../assets/playerData/gameData.js";
 import myWs from "../assets/myWs/myWs.js";
 export default {
   data() {
     return {
-      playerList: this.propPlayerNameList.map((el) => {
-        return {
-          name: el,
-          cardStatus: "selecting...",
-        };
-        // eslint-disable-next-line
-      }),
+      playerList: { name: "df", cardStatus: "selecting..." },
       situations: gameData.situations,
       cards: gameData.cards,
-      selected: gameData.cards[0],
+      selected: "0,jpg" || gameData.cards[0],
       ///timering
       timerStep: 20,
       gameStep: 1,
@@ -109,7 +101,7 @@ export default {
           // eslint-disable-next-line
         }),
       );
-      // удаляю карту которой походил
+      // удаляю карту которой походил //
       this.cards = this.cards.filter((card) => {
         return card != this.selected;
       });
@@ -145,18 +137,18 @@ export default {
     },
   },
   created() {
-    if (!(this.propPlayerNameList && this.code && this.myId)) {
-      console.log("notallprops");
-      this.$router.push({
-        path: "error",
-      });
-    }
     var timer = setInterval(() => {
       if (myWs.readyState != 0) {
         clearInterval(timer);
         this.myselfUpdatingFunc();
       }
     }, 100);
+    this.playerList = this.propPlayerNameList.map((el) => {
+      return {
+        name: el,
+        cardStatus: "selecting...",
+      };
+    });
   },
   mounted() {
     this.timesTimer();

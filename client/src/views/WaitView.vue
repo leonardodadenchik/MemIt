@@ -7,13 +7,20 @@
     <div v-for="(player, idx) in roomPlayers" :key="idx" class="playersBlocks">
       <div class="roomPlayer">
         <p>{{ idx + 1 }} - {{ player }}</p>
-        <button v-if="myid == 1" @click="playerKick(idx + 1)">x</button>
+        <button
+          v-if="myid == 1 && idx !== 0"
+          @click="playerKick(idx + 1, false)"
+        >
+          x
+        </button>
       </div>
     </div>
 
     <br />
 
-    <button v-if="myid == 1" @click="startMyGame()">StartGame</button>
+    <button v-if="myid == 1 && roomPlayers.length > 1" @click="startMyGame()">
+      StartGame
+    </button>
     <button @click="exitGame()">Exit</button>
   </div>
 </template>
@@ -91,18 +98,19 @@ export default {
     TODO: 1.Message Exit // need backend assist
     */
     exitGame() {
-      this.playerKick(this.myid);
+      this.playerKick(this.myid, true);
       this.$router.push({
         name: "join",
         params: { propCode: this.code, request: "exit?" },
       });
     },
-    playerKick(id) {
+    playerKick(id, isExit) {
       myWs.send(
         JSON.stringify({
           content: "delete_player",
           room_code: this.code,
           player_id: id,
+          isExit: isExit,
           // eslint-disable-next-line
         }),
       );

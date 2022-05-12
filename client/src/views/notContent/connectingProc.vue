@@ -40,17 +40,13 @@ export default {
           }
         };
       };
-      // if no code in props, i send err
-      if (this.code) {
-        var timer = setInterval(() => {
-          if (myWs.readyState != 0) {
-            clearInterval(timer);
-            connectMe();
-          }
-        }, 100);
-      } else {
-        reject("noProps");
-      }
+
+      var timer = setInterval(() => {
+        if (myWs.readyState != 0) {
+          clearInterval(timer);
+          connectMe();
+        }
+      }, 100);
     })
       .then((playerNameList) => {
         this.$router.push({
@@ -71,12 +67,9 @@ export default {
                 request: reason,
               },
             })
-          : (() => {
-              console.error(reason);
-              this.$router.push({
-                path: "error",
-              });
-            })();
+          : this.$router.push({
+              path: "error",
+            });
       });
   },
 };

@@ -19,6 +19,7 @@ const {
 	log_in,
 	get_new_tokens,
 	token_verification,
+	verify_account,
 } = require("./modules/authentication");
 const {token} = require("mysql/lib/protocol/Auth");
 
@@ -58,7 +59,7 @@ function onConnect(wsClient) {
 				connect_to_room(wsClient, jsonMessage, room, rooms);
 			} else if (jsonMessage.content === "delete_player") {
 				if (jsonMessage.room_code) {
-					delete_player(rooms, jsonMessage.player_id, jsonMessage.room_code);
+					delete_player(rooms, jsonMessage.player_id, jsonMessage.room_code,jsonMessage.isExit);
 				}
 			} else if (jsonMessage.content === "start_game") {
 				let room = find_room_by_code(rooms, jsonMessage.room_code);
@@ -87,17 +88,19 @@ function onConnect(wsClient) {
 					next_step(room);
 				}
 			} else if (jsonMessage.content === "verify_token") {
-				token_verification(jsonMessage.token).then((result) => {
-					if (result === true) {
-						wsClient.send(
-							JSON.stringify({content: "message", message: "token_is_valid"}),
-						);
-					} else {
-						wsClient.send(
-							JSON.stringify({content: "message", message: "err"}),
-						);
-					}
-				});
+				if (token_verification(jsonMessage.token)) {
+					wsClient.send(
+						JSON.stringify({content: "message", message: "token_is_valid"}),
+					);
+				} else {
+					wsClient.send(
+						JSON.stringify({content: "message", message: "err"}),
+					);
+				}
+			} else if (jsonMessage.content === "verify_account") {
+				verify_account(jsonMessage.id).then((result) =>
+					wsClient.send(JSON.stringify({content: "message", message: result}))
+				)
 			} else {
 				console.log("Unknown command");
 			}

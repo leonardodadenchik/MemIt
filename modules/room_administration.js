@@ -4,10 +4,12 @@ const fs = require("fs");
 let timer;
 
 
-const delete_player = (rooms, player_id,room_code) => {
+const delete_player = (rooms, player_id,room_code,isExit) => {
 	let room = find_room_by_code(rooms, room_code);
 	if (room) {
-		room.players[player_id - 1].wsClient.send(JSON.stringify({content: "kick"}))
+		if (!isExit) {
+			room.players[player_id - 1].wsClient.send(JSON.stringify({content: "kick"}))
+		}
 		if (room.players.length === 1) {
 			rooms.splice(rooms.indexOf	(room), 1);
 		} else {

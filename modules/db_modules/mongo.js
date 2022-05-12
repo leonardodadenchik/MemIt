@@ -85,9 +85,23 @@ const check_user = async (email, password) => {
 	});
 }
 
+const activate_account = async (id) => {
+	return new Promise((resolve)=>{
+		user_model.findById(id).then(function (result) {
+			if (!result) resolve("err");
+			if (result.isActive) resolve("account already activated");
+			user_model.findByIdAndUpdate(id,{isActive:true}).catch(function (err) {resolve("err")});
+			resolve("account successfully activated")
+		}).catch(function (err) {
+			resolve("err")
+		})
+	});
+}
+
 
 module.exports = {
 	get_situations,
 	add_user,
 	check_user,
+	activate_account,
 }

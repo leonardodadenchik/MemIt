@@ -1,10 +1,13 @@
-const {add_user, check_user} = require("./db_modules/mongo")
+const {add_user,
+	check_user,
+	activate_account
+} = require("./db_modules/mongo")
 const jwt = require('jsonwebtoken');
 const jwt_parameters = require("./jwt_parametrs/jwt_parametrs");
 const json = require("body-parser")
 const nodemailer = require('nodemailer');
 
-const validation_mail = async function (username,email,player_id) {
+const validation_mail = async function (username, email, player_id) {
 	let transporter = nodemailer.createTransport({
 		service: 'gmail',
 		auth: {
@@ -16,8 +19,8 @@ const validation_mail = async function (username,email,player_id) {
 	let result = await transporter.sendMail({
 		from: '"MemIt" <idea.memit@gmail.com>',
 		to: email,
-		subject: 'Doing your mom',
-		text: `Your activation code is ${player_id}`,
+		subject: 'Your activation link:',
+		text: `Your activation link is ${player_id}`,
 	})
 
 	console.log(result)
@@ -34,10 +37,10 @@ const new_tokens = function (email) {
 
 const sign_in = async (request, response) => {
 	request = request.body;
-	add_user(request.username,request.email, request.password).then((result) => {
+	add_user(request.username, request.email, request.password).then((result) => {
 		if (result.player_id) {
 
-			validation_mail(request.username,request.email,result.player_id);
+			validation_mail(request.username, request.email, result.player_id);
 		} else {
 			response.json(result);
 		}
@@ -67,15 +70,18 @@ const get_new_tokens = (request, response) => {
 }
 
 const token_verification = (token) => {
-	return new Promise((resolve) => {
-		jwt.verify(token, jwt_parameters.t_secret, (err, result) => {
-			if (result) {
-				resolve(true);
-			} else {
-				resolve(false);
-			}
+	jwt.verify(token, jwt_parameters.t_secret, (err, result) => {
+		if (result) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+}
 
-		});
+const verify_account = async (id) => {
+	return new Promise((resolve)=>{
+		resolve(activate_account(id));
 	});
 }
 
@@ -83,5 +89,6 @@ module.exports = {
 	sign_in,
 	log_in,
 	get_new_tokens,
-	token_verification
+	token_verification,
+	verify_account,
 }

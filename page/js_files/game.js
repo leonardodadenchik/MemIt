@@ -6,6 +6,7 @@ let game_data = {
 	nicknames: "",
 	player_id: "",
 	cards: "",
+	situations:"",
 	is_card_sent: false,
 	is_voted: false,
 }
@@ -82,6 +83,10 @@ async function log_in(email, password) {
 		console.log(result)
 	}
 
+}
+
+function verify_account(id) {
+	myWs.send(JSON.stringify({content:"verify_account",id:id}));
 }
 
 //я блять ниже больше не полезу, сам это говно разгребай
@@ -225,6 +230,7 @@ myWs.onmessage = function (jsonMessage) {
 		if (jsonMessage.status === "connectedToRoom") {
 			game_data.cards = jsonMessage.cards;
 			game_data.room_code = jsonMessage.room_code;
+			game_data.situations = jsonMessage.situations;
 			let cards = document.getElementById("cards");
 			for (let element of game_data.cards) {
 				cards.innerHTML += element + "<br>";
@@ -244,10 +250,10 @@ myWs.onmessage = function (jsonMessage) {
 			player_cards.innerHTML += item + ": " + jsonMessage.cards[i] + "<br>";
 		})
 
-	}else if(jsonMessage.content === "kick"){
+	} else if (jsonMessage.content === "kick") {
 		alert("you were kiked,Bro...");
 
-	}else if (jsonMessage.content === "next_step") {
+	} else if (jsonMessage.content === "next_step") {
 		interrupt_timer();
 		step_timer(30);
 		alert("Next step, choose your card and vote for some player");

@@ -33,8 +33,7 @@ export default {
               card_count: this.cardCount,
               sit_count: this.situationCount,
             },
-            // eslint-disable-next-line
-          }),
+          })
         );
         myWs.onmessage = (jsonMessage) => {
           jsonMessage = JSON.parse(jsonMessage.data);

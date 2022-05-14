@@ -20,8 +20,7 @@ export default {
             content: "connect_to_room",
             room_code: this.code,
             name: playerData.name,
-            // eslint-disable-next-line
-          }),
+          })
         );
         myWs.onmessage = (jsonMessage) => {
           jsonMessage = JSON.parse(jsonMessage.data);

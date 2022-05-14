@@ -89,8 +89,7 @@ export default {
         JSON.stringify({
           content: "start_game",
           room_code: this.code,
-          // eslint-disable-next-line
-        }),
+        })
       );
       this.gotGameStart();
     },
@@ -111,8 +110,7 @@ export default {
           room_code: this.code,
           player_id: id,
           isExit: isExit,
-          // eslint-disable-next-line
-        }),
+        })
       );
     },
     getJoinLink() {

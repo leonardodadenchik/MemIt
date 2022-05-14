@@ -98,8 +98,7 @@ export default {
           card: this.selected,
           player_id: this.myId,
           room_code: this.code,
-          // eslint-disable-next-line
-        }),
+        })
       );
       // удаляю карту которой походил //
       this.cards = this.cards.filter((card) => {
@@ -113,8 +112,7 @@ export default {
           content: "vote",
           vote: id,
           room_code: this.code,
-          // eslint-disable-next-line
-        }),
+        })
       );
     },
     imgesUrlGetter(cardName) {

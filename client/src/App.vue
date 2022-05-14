@@ -12,10 +12,13 @@
   <router-view />
 </template>
 <script>
+import {} from "./assets/acccount/index";
+
 export default {
   data() {
     return {};
   },
   methods() {},
+  created() {},
 };
 </script>

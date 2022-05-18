@@ -1,33 +1,38 @@
 <template>
   <div class="wait">
-    <h1>This is a wait page</h1>
-    <p>Your code is: {{ code }}</p>
-    <button @click="copyLink()">copyLink</button>
-    <hr />
-    <div v-for="(player, idx) in roomPlayers" :key="idx" class="playersBlocks">
-      <div class="roomPlayer">
-        <p>{{ idx + 1 }} - {{ player }}</p>
-        <button
-          v-if="myid == 1 && idx !== 0"
-          @click="playerKick(idx + 1, false)"
-        >
-          x
-        </button>
+    <h1>Wait for another players</h1>
+    <div class="codeInformatin">
+      <h2>Your code is: {{ code }}</h2>
+      <button @click="copyLink()">Copy</button>
+    </div>
+    <div class="playersModeration">
+      <div
+        v-for="(player, idx) in roomPlayers"
+        :key="idx"
+        class="playersBlocks"
+      >
+        <div class="roomPlayer">
+          <p>{{ idx + 1 }} - {{ player }}</p>
+          <button
+            v-if="myid == 1 && idx !== 0"
+            @click="playerKick(idx + 1, false)"
+          >
+            Kick
+          </button>
+        </div>
       </div>
     </div>
-
-    <br />
-
-    <button v-if="myid == 1 && roomPlayers.length > 1" @click="startMyGame()">
-      StartGame
-    </button>
-    <button @click="exitGame()">Exit</button>
+    <div class="buttonZone">
+      <button v-if="myid == 1 && roomPlayers.length > 1" @click="startMyGame()">
+        StartGame
+      </button>
+      <button @click="exitGame()">Exit</button>
+    </div>
   </div>
 </template>
 
 <script>
 import myWs from "../assets/myWs/myWs.js";
-//import playerData from "../assets/playerData/playerData.js";
 
 export default {
   data() {
@@ -93,9 +98,6 @@ export default {
       );
       this.gotGameStart();
     },
-    /*
-    TODO: 1.Message Exit // need backend assist
-    */
     exitGame() {
       this.playerKick(this.myid, true);
       this.$router.push({
@@ -130,3 +132,98 @@ export default {
   },
 };
 </script>
+<style scoped>
+.wait {
+  position: absolute;
+  background-color: #a5d3d4;
+  height: 75vh;
+  width: 50vw;
+  left: 25vw;
+  top: 13vh;
+  border-radius: 1.5em/1.5em;
+}
+.wait h1 {
+  color: #4c584d;
+  font-size: 5vh;
+  padding-top: 3vh;
+  text-align: center;
+}
+.codeInformatin h2 {
+  display: inline-block;
+  color: #4c584d;
+  font-size: 2vmax;
+  padding-left: 11vw;
+  padding-right: 1vw;
+}
+.codeInformatin button {
+  position: relative;
+  top: -0.6vh;
+  display: inline-block;
+  color: #4c584d;
+  font-size: 2vh;
+  width: 10vw;
+  height: 4vh;
+  border-radius: 0.5em/0.5em;
+  border: none;
+}
+.playersModeration {
+  position: absolute;
+  top: 25vh;
+  left: 11vw;
+}
+.playersModeration .roomPlayer {
+  position: relative;
+  font-size: 3vh;
+  width: 30vw;
+  height: 7vh;
+  border-bottom: 2px solid black;
+}
+.playersModeration .roomPlayer p {
+  display: inline-block;
+}
+.playersModeration .roomPlayer button {
+  position: absolute;
+  right: 1.8vw;
+  top: 2.5vh;
+  color: #4c584d;
+  font-size: 2vh;
+  width: 7vw;
+  height: 4vh;
+  border-radius: 0.5em/0.5em;
+  border: none;
+}
+.buttonZone {
+  position: absolute;
+  bottom: 4vh;
+  left: 5vw;
+  width: 40vw;
+  height: 5vh;
+}
+.buttonZone button {
+  position: relative;
+  top: -0.6vh;
+  display: inline-block;
+  color: #4c584d;
+  font-size: 2vh;
+  width: 10vw;
+  height: 5vh;
+  border-radius: 0.5em/0.5em;
+  border: none;
+}
+.buttonZone button:last-child {
+  position: absolute;
+  top: -0.6vh;
+  right: 0vw;
+  display: inline-block;
+  color: #4c584d;
+  font-size: 2vh;
+  width: 10vw;
+  height: 5vh;
+  border-radius: 0.5em/0.5em;
+  border: none;
+}
+button:hover {
+  background-color: rgb(233, 135, 135);
+  cursor: pointer;
+}
+</style>

@@ -1,15 +1,29 @@
 <template>
+  <button @click="redirMethod('play')" class="backButton">&#8666;</button>
   <div class="create">
-    <h1>This is a create page</h1>
-    <!--room making-->
-    <label>Card count:</label><br />
-    <input max="7" min="4" type="number" v-model="cardCount" /><br /><br />
+    <h1>Create room</h1>
+    <h3>Card count: {{ cardCount }}</h3>
+    <br />
+    <input
+      class="inputSlider"
+      type="range"
+      id="volume"
+      min="4"
+      max="7"
+      v-model="cardCount"
+    /><br /><br />
+    <h3>Situation count: {{ situationCount }}</h3>
+    <br />
+    <input
+      class="inputSlider"
+      type="range"
+      id="volume"
+      min="1"
+      max="4"
+      v-model="situationCount"
+    /><br /><br />
 
-    <label>Situation count:</label><br />
-    <input max="4" min="1" type="number" v-model="situationCount" /><br /><br />
-
-    <!--onclick="send_room_data()"-->
-    <button @click="roomCreatereques">Make room</button>
+    <button class="connectButton" @click="roomCreatereques">Make room</button>
   </div>
 </template>
 
@@ -23,6 +37,11 @@ export default {
     };
   },
   methods: {
+    redirMethod(where) {
+      this.$router.push({
+        name: where,
+      });
+    },
     roomCreatereques() {
       new Promise((resolve, reject) => {
         myWs.send(
@@ -61,3 +80,67 @@ export default {
   },
 };
 </script>
+<style scoped>
+.create {
+  position: absolute;
+  position: absolute;
+  background-color: #a5d3d4;
+  height: 70vh;
+  width: 30vw;
+  left: 35vw;
+  top: 15vh;
+  border-radius: 1.5em/1.5em;
+}
+.create h1 {
+  color: #4c584d;
+  font-size: 5vh;
+  padding-top: 6vh;
+  text-align: center;
+}
+.create h3 {
+  color: #584c4e;
+  font-size: 3vh;
+  text-align: center;
+}
+
+.inputSlider {
+  margin: 0;
+  margin-left: 6vw;
+  height: 0.3vh;
+  width: 18vw;
+  background: transparent;
+  border: none;
+}
+.inputSlider:focus {
+  outline: none;
+}
+inputSlider:hover {
+  outline: none;
+}
+.backButton {
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  border-radius: 50%;
+  border: none;
+  background-color: rgb(197, 244, 174);
+  color: #4c584d;
+  width: 50px;
+  height: 50px;
+}
+.connectButton {
+  position: absolute;
+  bottom: 10%;
+  left: 13%;
+  color: #4c584d;
+  font-size: 5vh;
+  width: 74%;
+  height: 15%;
+  border-radius: 0.5em/0.5em;
+  border: none;
+}
+button:hover {
+  background-color: rgb(233, 135, 135);
+  cursor: pointer;
+}
+</style>

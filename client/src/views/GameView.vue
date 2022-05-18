@@ -1,56 +1,62 @@
 <template>
   <div class="game">
-    <h1>This is a game page {{ this.timerStep }}</h1>
-
+    <div class="timerDiv">
+      <h1>Move time: {{ this.timerStep }}</h1>
+    </div>
     <div class="playersZone">
       <div class="player" v-for="(player, idx) in playerList" :key="player">
         <div v-if="idx + 1 != this.myId">
-          <p>{{ player.name }}</p>
-          <button
-            @click="sendVote(idx + 1)"
-            v-if="player.cardStatus != 'selecting...'"
-          >
-            Vote
-          </button>
-          <img
-            :src="imgesUrlGetter(player.cardStatus)"
-            v-if="player.cardStatus != 'selecting...'"
-          />
+          <div :id="`position__${idx + 1 > this.myId ? idx : idx + 1}`">
+            <h2>{{ player.name }}</h2>
+            <button
+              @click="sendVote(idx + 1)"
+              v-if="player.cardStatus != 'selecting...' && !isVoted"
+            >
+              Vote
+            </button>
+            <img
+              :src="imgesUrlGetter(player.cardStatus)"
+              v-if="player.cardStatus != 'selecting...'"
+            />
+          </div>
         </div>
       </div>
     </div>
-    <div class="situationZone">{{ situations[gameStep - 1] }}</div>
+    <div class="situationZone">
+      Ситуація:<br />{{ situations[gameStep - 1] }}
+    </div>
     <div
       class="cardsZone"
       v-show="
         this.playerList[Number(this.myId) - 1].cardStatus == 'selecting...'
       "
     >
-      <select v-model="selected">
-        <option v-for="card in cards" :key="card">{{ card }}</option>
-      </select>
-      <button @click="sendCard()">Select</button>
+      <div v-for="card in cards" :key="card">
+        <img
+          @click="sendCard(card)"
+          class="cardImg"
+          :src="imgesUrlGetter(card)"
+        />
+      </div>
+      <!--<button @click="sendCard()">Select</button>-->
     </div>
   </div>
 </template>
 
 <script>
-/*
-TODO: убрать 1 next_step(ss)
-*/
 import gameData from "../assets/playerData/gameData.js";
 import myWs from "../assets/myWs/myWs.js";
 export default {
   data() {
     return {
-      playerList: { name: "df", cardStatus: "selecting..." },
+      playerList: [{ name: "df", cardStatus: "selecting..." }],
       situations: gameData.situations,
       cards: gameData.cards,
-      selected: "0,jpg" || gameData.cards[0],
       ///timering
       timerStep: 20,
       gameStep: 1,
       timerId: undefined,
+      isVoted: false,
     };
   },
   methods: {
@@ -79,34 +85,41 @@ export default {
             this.playerList.map((el) => {
               return (el.cardStatus = "selecting...");
             });
-            console.log("next step");
             this.gameStep += 1;
             this.timerStep = 0;
+            this.isVoted = false;
             this.timesTimer();
             break;
           case "end":
-            console.log("end");
-            console.log(jsonMessage.winner);
+            this.$router.push({
+              name: "play",
+            });
+            alert(
+              `Game end! Winner is ${
+                jsonMessage.winner != "" ? jsonMessage.winner : "nobody"
+              }`
+            );
             break;
         }
       };
     },
-    sendCard() {
+    sendCard(cardToSend) {
+      console.log(cardToSend);
       myWs.send(
         JSON.stringify({
           content: "card",
-          card: this.selected,
+          card: cardToSend,
           player_id: this.myId,
           room_code: this.code,
         })
       );
       // удаляю карту которой походил //
       this.cards = this.cards.filter((card) => {
-        return card != this.selected;
+        return card != cardToSend;
       });
-      this.selected = this.cards[0];
     },
     sendVote(id) {
+      this.isVoted = true;
       myWs.send(
         JSON.stringify({
           content: "vote",
@@ -116,7 +129,7 @@ export default {
       );
     },
     imgesUrlGetter(cardName) {
-      // return `location.origin/imahes_library.${cardName}`
+      // return `${location.origin}/imahes_library.${cardName}`
       return `http://localhost:3000/images_library/${cardName}`;
     },
   },
@@ -150,29 +163,96 @@ export default {
   },
   mounted() {
     this.timesTimer();
+    var cads = Array.from(document.getElementsByClassName("cardImg"));
+
+    var timering = setInterval(() => {
+      if (cads[0].offsetWidth > 0) {
+        clearInterval(timering);
+        cads.forEach((el) => {
+          if (el.offsetWidth / el.offsetHeight > 1) {
+            el.width = el.width * 0.7;
+          }
+        });
+      }
+    }, 100);
   },
 };
 </script>
 <style scoped>
-.player div {
-  border: 3px solid grey;
-  width: 30%;
-  margin: 3px;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  padding: 10px;
-}
-.player img {
-  height: 100px;
-}
 .situationZone {
-  width: 40%;
-  border: 3px solid red;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  padding: 10px;
+  position: absolute;
+  font-size: 3vmin;
+  width: 30vw;
+  left: 34vw;
+  height: 10vh;
+  top: 27vh;
+  padding: 2vw;
+}
+.playersZone h2 {
+  display: inline-block;
+  margin-right: 1vw;
+}
+.playersZone button {
+  height: 3.5vh;
+  width: 7vw;
+  border: none;
+  border-radius: 0.5em/0.5em;
+  background-color: rgb(220, 234, 246);
+}
+.playersZone img {
+  position: absolute;
+  left: 0;
+  top: 9vh;
+  height: 18vh;
+  border-radius: 0.2em/0.2em;
+}
+#position__1 {
+  position: absolute;
+
+  width: 25vw;
+  height: 30vh;
+  top: 7vh;
+  left: 0;
+}
+
+#position__2 {
+  position: absolute;
+
+  width: 25vw;
+  height: 30vh;
+  top: 7vh;
+  right: 0;
+}
+#position__3 {
+  position: absolute;
+
+  width: 25vw;
+  height: 30vh;
+  top: 40vh;
+  left: 0;
+}
+#position__4 {
+  position: absolute;
+
+  width: 25vw;
+  height: 30vh;
+  top: 40vh;
+  right: 0;
 }
 .cardsZone {
-  margin-top: 50px;
+  position: absolute;
+  height: 18vh;
+  bottom: 0;
+  width: 100vw;
+}
+.cardsZone div {
+  display: inline-block;
+}
+.cardsZone img {
+  height: 18vh;
+}
+.cardsZone img:hover {
+  transition: all 0.1s ease-in-out 0s;
+  transform: scale(1.1, 1.1);
 }
 </style>

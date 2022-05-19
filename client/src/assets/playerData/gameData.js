@@ -1,4 +1,4 @@
 export default {
-  cards: undefined,
-  situations: undefined,
-};
+    cards: undefined,
+    situations: undefined,
+}

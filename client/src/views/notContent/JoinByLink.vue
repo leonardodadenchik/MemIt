@@ -1,15 +1,15 @@
 <template>
-  <div></div>
+    <div></div>
 </template>
 <script>
 export default {
-  created() {
-    this.$router.push({
-      name: "join",
-      params: {
-        propCode: `${this.$route.params.roomCode}`,
-      },
-    });
-  },
-};
+    created() {
+        this.$router.push({
+            name: 'join',
+            params: {
+                propCode: `${this.$route.params.roomCode}`,
+            },
+        })
+    },
+}
 </script>

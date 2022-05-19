@@ -2,11 +2,11 @@ function connect_to_room(wsClient, jsonMessage, room, rooms) {
 	if (room) {
 		if (room.step != 0) {
 			wsClient.send(JSON.stringify({
-				content: "connectingAns", status: "GameStarted"
+				content: "connectingAns", status: "Гра вже почалася"
 			}));
 		} else if (room.players.length === room.playersCount) {
 			wsClient.send(JSON.stringify({
-				content: "connectingAns", status: 'roomIsFool'
+				content: "connectingAns", status: 'Кімната переповнена'
 			}));
 		} else {
 			wsClient.send(JSON.stringify({
@@ -36,7 +36,7 @@ function connect_to_room(wsClient, jsonMessage, room, rooms) {
 		})
 	} else {
 		wsClient.send(JSON.stringify({
-			content: "connectingAns", status: "roomNotFound",
+			content: "connectingAns", status: "Кімната не існує",
 		}));
 	}
 };

@@ -21,9 +21,7 @@ const validation_mail = async function (username, email, player_id) {
 		to: email,
 		subject: 'Your activation link:',
 		text: `Your activation link is ${player_id}`,
-	})
-
-	console.log(result)
+	}).catch(function (err) {console.log(err)});
 }
 
 const new_tokens = function (email) {
@@ -39,8 +37,8 @@ const sign_in = async (request, response) => {
 	request = request.body;
 	add_user(request.username, request.email, request.password).then((result) => {
 		if (result.player_id) {
-
 			validation_mail(request.username, request.email, result.player_id);
+			response.json("validate_your_mail_pls")
 		} else {
 			response.json(result);
 		}

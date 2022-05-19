@@ -1,4 +1,4 @@
 export default {
-  name: "Player",
-  post: "example.@gmail.com",
-};
+    name: 'Player',
+    post: 'example.@gmail.com',
+}

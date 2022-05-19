@@ -24,6 +24,10 @@ function verify_token() {
 	myWs.send(JSON.stringify({content: 'verify_token', token: localStorage.getItem("token")}));
 }
 
+function verify_account(id) {
+	myWs.send(JSON.stringify({content:"verify_account",id:id}));
+}
+
 async function get_new_tokens() {
 	let data_to_send = JSON.stringify({
 		token: localStorage.getItem("token"),

@@ -56,12 +56,14 @@ export default {
 }
 </script>
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap');
 textarea:focus,
 input:focus {
     outline: none;
 }
 
 .join {
+    font-family: 'Nunito', sans-serif;
     position: absolute;
     position: absolute;
     background-color: #a5d3d4;
@@ -84,6 +86,7 @@ input:focus {
 }
 
 input {
+    font-family: 'Nunito', sans-serif;
     font-size: 2.2vmin;
     padding: 4%;
     width: 66%;
@@ -107,6 +110,7 @@ input:last-child {
     height: 50px;
 }
 .connectButton {
+    font-family: 'Nunito', sans-serif;
     position: absolute;
     bottom: 10%;
     left: 13%;

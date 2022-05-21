@@ -83,6 +83,7 @@ export default {
 }
 </script>
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap');
 .create {
     position: absolute;
     position: absolute;
@@ -92,6 +93,7 @@ export default {
     left: 35vw;
     top: 15vh;
     border-radius: 1.5em/1.5em;
+    font-family: 'Nunito', sans-serif;
 }
 .create h1 {
     color: #4c584d;
@@ -151,6 +153,7 @@ button {
     border: none;
     box-shadow: 6px 6px 10px 1px;
     transition: all 0.5s;
+    font-family: 'Nunito', sans-serif;
 }
 button:hover {
     background-color: rgb(233, 135, 135);

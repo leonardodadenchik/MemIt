@@ -22,16 +22,20 @@ export default {
 }
 </script>
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap');
 .err {
+    font-family: 'Nunito', sans-serif;
     position: absolute;
     left: 40vw;
     top: 20vh;
     border-radius: 1.5em/1.5em;
 }
 .buttonsBlock {
+    font-family: 'Nunito', sans-serif;
     margin-left: -5vw;
 }
 .buttonsBlock button {
+    font-family: 'Nunito', sans-serif;
     display: inline-block;
     border: none;
     border-radius: 1em/1em;

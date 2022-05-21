@@ -25,8 +25,8 @@ const validation_mail = async function (username, email, player_id) {
 }
 
 const new_tokens = function (email) {
-	let token = jwt.sign({email: email}, jwt_parameters.t_secret, {expiresIn: 20});
-	let refresh_token = jwt.sign({email: email}, jwt_parameters.r_t_secret, {expiresIn: 60});
+	let token = jwt.sign({email: email}, jwt_parameters.t_secret, {expiresIn: 60*30});
+	let refresh_token = jwt.sign({email: email}, jwt_parameters.r_t_secret, {expiresIn: 60*60*12});
 	return {
 		token: token,
 		refresh_token: refresh_token,

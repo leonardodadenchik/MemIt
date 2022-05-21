@@ -137,7 +137,9 @@ export default {
 }
 </script>
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap');
 .wait {
+    font-family: 'Nunito', sans-serif;
     position: absolute;
     background-color: #a5d3d4;
     height: 75vh;
@@ -160,6 +162,7 @@ export default {
     padding-right: 1vw;
 }
 .codeInformatin button {
+    font-family: 'Nunito', sans-serif;
     position: relative;
     top: -0.6vh;
     display: inline-block;
@@ -171,6 +174,7 @@ export default {
     border: none;
 }
 .playersModeration {
+    font-family: 'Nunito', sans-serif;
     position: absolute;
     top: 25vh;
     left: 11vw;
@@ -186,6 +190,7 @@ export default {
     display: inline-block;
 }
 .playersModeration .roomPlayer button {
+    font-family: 'Nunito', sans-serif;
     position: absolute;
     right: 1.8vw;
     top: 2.5vh;
@@ -204,6 +209,7 @@ export default {
     height: 5vh;
 }
 .buttonZone button {
+    font-family: 'Nunito', sans-serif;
     position: relative;
     top: -0.6vh;
     display: inline-block;

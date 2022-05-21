@@ -20,6 +20,7 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@900&display=swap');
 .play {
     position: absolute;
     background-color: #a5d3d4;
@@ -32,8 +33,9 @@ export default {
 .play h1 {
     color: #4c584d;
     font-size: 13vh;
-    padding-top: 7vh;
+    padding-top: 2vh;
     text-align: center;
+    font-family: 'Nunito', sans-serif;
 }
 .play button {
     color: #4c584d;
@@ -46,6 +48,7 @@ export default {
     top: 38vh;
     box-shadow: 6px 6px 10px 1px;
     transition: all 0.5s;
+    font-family: 'Nunito', sans-serif;
 }
 .play button:hover {
     background-color: rgb(233, 135, 135);

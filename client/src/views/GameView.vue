@@ -1,7 +1,7 @@
 <template>
     <div class="game">
         <div class="timerDiv">
-            <h1>Move time: {{ this.timerStep }}</h1>
+            <h1>Залишилось часу на хід: {{ this.timerStep }}с.</h1>
         </div>
         <div class="playersZone">
             <div
@@ -14,18 +14,28 @@
                         :id="`position__${idx + 1 > this.myId ? idx : idx + 1}`"
                     >
                         <h2>{{ player.name }}</h2>
-                        <button
-                            @click="sendVote(idx + 1)"
-                            v-if="
-                                player.cardStatus != 'selecting...' && !isVoted
-                            "
-                        >
-                            Vote
-                        </button>
-                        <img
-                            :src="imgesUrlGetter(player.cardStatus)"
-                            v-if="player.cardStatus != 'selecting...'"
-                        />
+                        <!--<button
+              @click="sendVote(idx + 1)"
+              v-if="player.cardStatus != 'selecting...' && !isVoted"
+            >
+              Vote
+            </button>-->
+                        <div class="usedCardDivenge">
+                            <div
+                                class="voteDivenge"
+                                @click="sendVote(idx + 1)"
+                                v-if="
+                                    player.cardStatus != 'selecting...' &&
+                                    !isVoted
+                                "
+                            >
+                                <p>VOTE</p>
+                            </div>
+                            <img
+                                :src="imgesUrlGetter(player.cardStatus)"
+                                v-if="player.cardStatus != 'selecting...'"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -33,22 +43,19 @@
         <div class="situationZone">
             Ситуація:<br />{{ situations[gameStep - 1] }}
         </div>
-        <div
-            class="cardsZone"
-            v-show="
-                this.playerList[Number(this.myId) - 1].cardStatus ==
-                'selecting...'
-            "
-        >
-            <div v-for="card in cards" :key="card">
-                <img
-                    @click="sendCard(card)"
-                    class="cardImg"
-                    :src="imgesUrlGetter(card)"
-                />
-            </div>
-            <!--<button @click="sendCard()">Select</button>-->
+        <!--      v-show="
+        this.playerList[Number(this.myId) - 1].cardStatus == 'selecting...'
+      "-->
+        <div class="cardsZone">
+            <img
+                v-for="card in cards"
+                :key="card"
+                @click="sendCard(card)"
+                class="cardImg"
+                :src="imgesUrlGetter(card)"
+            />
         </div>
+        <img :src="imgesUrlGetter(mySelectedCard)" class="myCard" />
     </div>
 </template>
 
@@ -58,6 +65,7 @@ import myWs from '../assets/myWs/myWs.js'
 export default {
     data() {
         return {
+            // default
             playerList: [{ name: 'df', cardStatus: 'selecting...' }],
             situations: gameData.situations,
             cards: gameData.cards,
@@ -66,6 +74,8 @@ export default {
             gameStep: 1,
             timerId: undefined,
             isVoted: false,
+            //for mySelectedCard
+            mySelectedCard: '',
         }
     },
     methods: {
@@ -91,12 +101,26 @@ export default {
                         })
                         break
                     case 'next_step':
+                        // delete move photos
                         this.playerList.map((el) => {
                             return (el.cardStatus = 'selecting...')
                         })
+                        //upadte game data
                         this.gameStep += 1
                         this.timerStep = 0
+                        //add appoutunity to vote
                         this.isVoted = false
+                        //hide my card
+                        var myCard = Array.from(
+                            document.getElementsByClassName('myCard')
+                        )
+                        myCard[0].style.bottom = `-300px`
+                        //get cards back
+                        var cadsZone = Array.from(
+                            document.getElementsByClassName('cardsZone')
+                        )
+                        cadsZone[0].style.bottom = `-20px`
+                        //reload timer
                         this.timesTimer()
                         break
                     case 'end':
@@ -114,9 +138,16 @@ export default {
                 }
             }
         },
-        sendCard(cardToSend) {
-            console.log(cardToSend)
-            myWs.send(
+        cardsRecalcilating() {
+            var cadsZone = Array.from(
+                document.getElementsByClassName('cardsZone')
+            )
+            cadsZone[0].style.left = `${
+                (100 - (this.cards.length * 5 + 2)) / 2.8
+            }vw`
+        },
+        sendCard: async function (cardToSend) {
+            await myWs.send(
                 JSON.stringify({
                     content: 'card',
                     card: cardToSend,
@@ -124,10 +155,18 @@ export default {
                     room_code: this.code,
                 })
             )
+            // recalc left pos of deck
+            var cadsZone = Array.from(
+                document.getElementsByClassName('cardsZone')
+            )
+            cadsZone[0].style.bottom = `-300px`
+            // my card show
+            this.mySelectedCard = cardToSend
+            var myCard = Array.from(document.getElementsByClassName('myCard'))
+            myCard[0].style.bottom = `25px`
             // удаляю карту которой походил //
-            this.cards = this.cards.filter((card) => {
-                return card != cardToSend
-            })
+            this.cards = this.cards.filter((el) => el != cardToSend)
+            this.cardsRecalcilating()
         },
         sendVote(id) {
             this.isVoted = true
@@ -174,23 +213,35 @@ export default {
     },
     mounted() {
         this.timesTimer()
-        var cads = Array.from(document.getElementsByClassName('cardImg'))
-
+        //var cardzone = document.getElementsByClassName("cardsZone")[0];
         var timering = setInterval(() => {
+            // card rebuildimage
+            var cads = Array.from(document.getElementsByClassName('cardImg'))
             if (cads[0].offsetWidth > 0) {
                 clearInterval(timering)
                 cads.forEach((el) => {
-                    if (el.offsetWidth / el.offsetHeight > 1) {
-                        el.width = el.width * 0.7
+                    if (el.offsetWidth > el.offsetHeight) {
+                        el.classList.add('revetsedCard')
+                    } else {
+                        el.classList.add('verticalCard')
                     }
                 })
+                this.cardsRecalcilating()
+
+                //let baseCardHeight = 200;
+                //let betweenCardDistance = 30;
+                //var margLeft = 0;
             }
         }, 100)
     },
 }
 </script>
 <style scoped>
+.timerDiv {
+    font-family: 'Nunito', sans-serif;
+}
 .situationZone {
+    font-family: 'Nunito', sans-serif;
     position: absolute;
     font-size: 3vmin;
     width: 30vw;
@@ -200,6 +251,7 @@ export default {
     padding: 2vw;
 }
 .playersZone h2 {
+    font-family: 'Nunito', sans-serif;
     display: inline-block;
     margin-right: 1vw;
 }
@@ -210,12 +262,51 @@ export default {
     border-radius: 0.5em/0.5em;
     background-color: rgb(220, 234, 246);
 }
-.playersZone img {
+@keyframes cardAppearance {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.playersZone .usedCardDivenge {
     position: absolute;
     left: 0;
-    top: 9vh;
-    height: 18vh;
-    border-radius: 0.2em/0.2em;
+    height: 250px;
+    max-width: 25vw;
+}
+.playersZone img {
+    position: relative;
+    z-index: 1;
+    height: 250px;
+    max-width: 25vw;
+    border-radius: 17px/17px;
+    animation: cardAppearance 0.2s linear 1 normal running 0s forwards;
+}
+.playersZone .voteDivenge {
+    position: absolute;
+    opacity: 0;
+    z-index: 3;
+    height: 250px;
+    width: 100%;
+    border-radius: 17px/17px;
+}
+.playersZone .voteDivenge p {
+    font-family: 'Nunito', sans-serif;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    font-size: 4vw;
+    opacity: 1;
+    color: rgb(168, 154, 154);
+}
+.playersZone .voteDivenge:hover {
+    opacity: 0.5;
+    background-color: whitesmoke;
+    cursor: pointer;
 }
 #position__1 {
     position: absolute;
@@ -239,7 +330,7 @@ export default {
 
     width: 25vw;
     height: 30vh;
-    top: 40vh;
+    top: 47vh;
     left: 0;
 }
 #position__4 {
@@ -247,23 +338,56 @@ export default {
 
     width: 25vw;
     height: 30vh;
-    top: 40vh;
+    top: 47vh;
     right: 0;
 }
 .cardsZone {
-    position: absolute;
-    height: 18vh;
-    bottom: 0;
-    width: 100vw;
+    z-index: 5;
+    transition: all 0.4s ease-out;
+    position: fixed;
+    bottom: -20px;
+    left: 28vw;
 }
-.cardsZone div {
-    display: inline-block;
-}
+
 .cardsZone img {
-    height: 18vh;
+    display: inline-flex;
+    margin-right: -80px;
+    transition: all 0.4s ease-out;
+    bottom: 0;
+    border-radius: 5%;
 }
 .cardsZone img:hover {
-    transition: all 0.1s ease-in-out 0s;
-    transform: scale(1.1, 1.1);
+    z-index: 10;
+    transform: scale(1.3, 1.3);
+}
+.revetsedCard {
+    transform: rotate(-90deg);
+    margin-bottom: 20px;
+    width: 200px;
+    height: 160px;
+}
+.revetsedCard:hover {
+    box-shadow: 0px 30px 26px 16px rgba(34, 60, 80, 0.53);
+    transform: rotate(0deg);
+    margin-right: 0px;
+    margin-bottom: 35px;
+}
+.verticalCard {
+    transform: rotate(0deg);
+    height: 200px;
+    width: 160px;
+}
+.verticalCard:hover {
+    box-shadow: 0px 65px 26px 16px rgba(34, 60, 80, 0.53);
+    margin-bottom: 40px;
+    margin-right: -0px;
+}
+.myCard {
+    transition: all 0.4s ease-out;
+    position: fixed;
+    border-radius: 5%/5%;
+    height: 250px;
+    left: 35%;
+    bottom: -300px;
 }
 </style>

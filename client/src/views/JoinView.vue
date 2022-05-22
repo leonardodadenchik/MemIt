@@ -112,7 +112,7 @@ input:last-child {
 .connectButton {
     font-family: 'Nunito', sans-serif;
     position: absolute;
-    bottom: 10%;
+    bottom: 5%;
     left: 13%;
     color: #4c584d;
     font-size: 5vh;

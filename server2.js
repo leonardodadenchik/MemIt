@@ -3,6 +3,7 @@ const app = express();
 const {Server} = require("ws");
 const wsServer = new Server({port: 8814});
 const jsonParser = express.json();
+const fallback = require('express-history-api-fallback')
 
 const {
 	delete_player,
@@ -21,17 +22,14 @@ const {
 	token_verification,
 	verify_account,
 } = require("./modules/authentication");
-const {token} = require("mysql/lib/protocol/Auth");
+const root = __dirname + "/public";
 
 const PORT = process.env.PORT || 3000;
 
 let rooms = [];
+app.use(express.static(root));
+app.use(fallback('index.html', { root: root }));
 
-app.use(express.static(__dirname + "/public"));
-app.use(function (req, res, next){
-	res.redirect('/');
-	next();
-});
 app.post("/sign_in", jsonParser, sign_in);
 app.post("/log_in", jsonParser, log_in);
 app.post("/refresh_token", jsonParser, get_new_tokens);

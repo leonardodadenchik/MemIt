@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const photoDir = "./page/images_library";
+const photoDir = "./public/images_library";
 
 const { get_situations } = require("./db_modules/mongo");
 

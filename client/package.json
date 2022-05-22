@@ -28,7 +28,7 @@
     "eslint-plugin-vue": "^8.0.3",
     "prettier": "^2.4.1"
   },
-  "prettier":{
+  "prettier": {
     "trailingComma": "es5",
     "tabWidth": 4,
     "semi": false,

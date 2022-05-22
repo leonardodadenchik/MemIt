@@ -5,7 +5,7 @@
             <button @click="redirMethod('home')">
                 Повернутися на головну сторінку
             </button>
-            <h2>or</h2>
+            <h2>чи</h2>
             <button @click="redirMethod('play')">Грати</button>
         </div>
     </div>
@@ -26,13 +26,14 @@ export default {
 .err {
     font-family: 'Nunito', sans-serif;
     position: absolute;
-    left: 40vw;
-    top: 20vh;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     border-radius: 1.5em/1.5em;
 }
 .buttonsBlock {
     font-family: 'Nunito', sans-serif;
-    margin-left: -5vw;
+    margin-left: -8vw;
 }
 .buttonsBlock button {
     font-family: 'Nunito', sans-serif;

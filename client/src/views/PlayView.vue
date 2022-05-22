@@ -39,7 +39,7 @@ export default {
 }
 .play button {
     color: #4c584d;
-    font-size: 5vh;
+    font-size: 3vmin;
     position: absolute;
     width: 17vw;
     height: 7vw;

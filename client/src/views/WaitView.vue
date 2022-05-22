@@ -17,7 +17,7 @@
                         v-if="myid == 1 && idx !== 0"
                         @click="playerKick(idx + 1, false)"
                     >
-                        Видалити гравця
+                        Видалити
                     </button>
                 </div>
             </div>
@@ -42,6 +42,7 @@ export default {
         return {
             myid: this.propMyId,
             roomPlayers: this.propPlayerList,
+            timesDestroyPage: -1,
         }
     },
     props: {
@@ -75,12 +76,14 @@ export default {
                             name: 'join',
                             params: {
                                 propCode: this.code,
-                                request:
-                                    'Ти був вигнаний з кімнати, гг вп лузер',
+                                request: 'Ти був вигнаний з кімнати',
                             },
                         })
                         break
                 }
+            }
+            window.onbeforeunload = function () {
+                this.playerKick(this.myid, true)
             }
         },
         gotGameStart() {
@@ -106,7 +109,7 @@ export default {
             this.playerKick(this.myid, true)
             this.$router.push({
                 name: 'join',
-                params: { propCode: this.code, request: 'exit?' },
+                params: { propCode: this.code, request: 'впевненний?' },
             })
         },
         playerKick(id, isExit) {

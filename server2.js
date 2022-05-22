@@ -27,8 +27,11 @@ const PORT = process.env.PORT || 3000;
 
 let rooms = [];
 
-app.use(express.static(__dirname + "/page"));
-
+app.use(express.static(__dirname + "/public"));
+app.use(function (req, res, next){
+	res.redirect('/');
+	next();
+});
 app.post("/sign_in", jsonParser, sign_in);
 app.post("/log_in", jsonParser, log_in);
 app.post("/refresh_token", jsonParser, get_new_tokens);

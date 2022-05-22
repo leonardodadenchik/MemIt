@@ -14,7 +14,7 @@ const create_room = async (room_settings, rooms) => {
     situations: await get_situations(room_settings),
     cards: cardGen(
       Number(room_settings.player_count),
-      Number(room_settings.card_count),
+      Number(room_settings.card_count)
     ),
     step: 0,
     votes: 0,
@@ -55,7 +55,7 @@ const cardGen = (playersCount, needCards) => {
           ? ++currentDeck
           : currentDeck;
       playersCards[currentDeck].push(allPictureFiles[el]);
-    },
+    }
   );
 
   return playersCards;

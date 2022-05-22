@@ -112,10 +112,6 @@ export default {
                 params: { propCode: this.code, request: 'впевненний?' },
             })
         },
-        hardExit() {
-            this.playerKick(this.myid, true)
-            alert('hardExit')
-        },
         playerKick(id, isExit) {
             myWs.send(
                 JSON.stringify({
@@ -140,10 +136,6 @@ export default {
                 this.myselfUpdatingFunc()
             }
         }, 100)
-    },
-
-    beforeUnmount() {
-        this.hardExit()
     },
 }
 </script>

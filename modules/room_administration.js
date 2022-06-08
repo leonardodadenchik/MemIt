@@ -60,7 +60,7 @@ const update_card_status = (room) => {
 };
 
 const next_step = (room) => {
-	if (room.step == room.situations.length) {
+	if (room.step === room.situations.length) {
 		room.players.sort((a, b) => b.votes - a.votes);
 		send_to_all(
 			room,

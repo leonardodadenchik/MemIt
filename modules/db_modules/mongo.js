@@ -1,7 +1,7 @@
 const {mongoose} = require("mongoose");
 const Schema = mongoose.Schema;
 const model = mongoose.model;
-const mongoApiKey = "mongodb+srv://kaelovek:letmekeepitsecret@cluster0.y4hpw.mongodb.net/memesituations?retryWrites=true&w=majority";
+const mongoApiKey = "mongodb+srv://kaelovek:letmekeepitsecret@memit.shrjp0j.mongodb.net/?retryWrites=true&w=majority";
 const bcrypt = require("bcrypt");
 
 mongoose.connect(mongoApiKey, {useUnifiedTopology: true, useNewUrlParser: true});

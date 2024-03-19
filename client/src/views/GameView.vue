@@ -179,7 +179,7 @@ export default {
             )
         },
         imgesUrlGetter(cardName) {
-            return `${location.origin}/imahes_library.${cardName}`
+            return `${location.origin}/images_library.${cardName}`
             /*return `http://localhost:3000/images_library/${cardName}`*/
         },
     },

@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const {Server} = require("ws");
-const wsServer = new Server({port: 8814});
+const wsServer = new Server({port: 80});
 const jsonParser = express.json();
 const fallback = require('express-history-api-fallback')
 

@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const {Server} = require("ws");
-const wsServer = new Server({port: 80});
 const jsonParser = express.json();
 const fallback = require('express-history-api-fallback')
 
@@ -34,7 +33,9 @@ app.post("/sign_in", jsonParser, sign_in);
 app.post("/log_in", jsonParser, log_in);
 app.post("/refresh_token", jsonParser, get_new_tokens);
 
-app.listen(PORT, () => console.log("Server is working!"));
+const server = app.listen(PORT, () => console.log("Server is working!"));
+
+const wsServer = new Server({ server: server });
 
 wsServer.on("connection", onConnect);
 

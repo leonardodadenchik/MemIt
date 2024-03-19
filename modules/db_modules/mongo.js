@@ -98,7 +98,6 @@ const activate_account = async (id) => {
     });
 }
 
-
 module.exports = {
     get_situations,
     add_user,

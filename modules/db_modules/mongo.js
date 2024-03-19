@@ -63,7 +63,7 @@ const add_user = async (username, email, password) => {
                 user.save(function (err) {
                     if (err) resolve("err");
                 })
-                resolve({player_id: user.id});
+                resolve({player_id:user.id});
             }
         }).catch(function (err) {
             resolve("err");
@@ -86,13 +86,11 @@ const check_user = async (email, password) => {
 }
 
 const activate_account = async (id) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve)=>{
         user_model.findById(id).then(function (result) {
             if (!result) resolve("err");
             if (result.isActive) resolve("account already activated");
-            user_model.findByIdAndUpdate(id, {isActive: true}).catch(function (err) {
-                resolve("err")
-            });
+            user_model.findByIdAndUpdate(id,{isActive:true}).catch(function (err) {resolve("err")});
             resolve("account successfully activated")
         }).catch(function (err) {
             resolve("err")

@@ -5,7 +5,6 @@ The platform handles real-time game state across all connected players, manages 
 
 
 <img width="2560" height="1440" alt="Screenshot 2026-05-23 224211" src="https://github.com/user-attachments/assets/7bab2ae7-84d7-4076-9170-9d5d2d40a661" />
-![Uploading Screenshot 2026-05-23 224211.png…]()
 
 <img width="2560" height="1440" alt="Screenshot 2026-05-23 224231" src="https://github.com/user-attachments/assets/a731de97-edca-4faa-a330-49a8debef7c0" />
 

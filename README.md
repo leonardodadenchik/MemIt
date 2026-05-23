@@ -2,6 +2,8 @@
 A web-based multiplayer card game built for groups of friends, designed to find out who has the best sense of humour. Each round, players are dealt a hand of meme cards and presented with a situation — the goal is to pick the funniest meme that fits.
 The game runs in real-time: all players submit their pick, then vote anonymously on each other's choices. Points go to whoever gets the most votes that round. After a set number of cycles, the player with the highest total votes is crowned the meme champion.
 The platform handles real-time game state across all connected players, manages card dealing and submission logic, and tallies votes to produce a live leaderboard as the game progresses.
+
+
 <img width="2560" height="1440" alt="Screenshot 2026-05-23 224211" src="https://github.com/user-attachments/assets/7bab2ae7-84d7-4076-9170-9d5d2d40a661" />
 ![Uploading Screenshot 2026-05-23 224211.png…]()
 
